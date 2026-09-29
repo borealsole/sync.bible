@@ -1,15 +1,17 @@
 // External
-import { useRef } from 'react';
+import { useRef, useSyncExternalStore } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 // Internal
 import CopyToClipboard from '../copy-to-clipboard';
+import AudioButton from '../audio-button';
 import Verse from './verse';
 import VerseNumber from './verse-number';
 import styles from './styles.module.scss';
 import bible from '../../data/bible.js';
+import { audioPlayer } from '../../lib/audio/player';
 
 const getClassName = ( book, version ) => {
 	if (
@@ -40,12 +42,22 @@ export default function VerseWrapper( {
 	const verseWrapperRef = useRef( null );
 	const reference = { book, chapter: chapter - 1, verse: verse - 1 };
 	const fill = darkMode ? '#eeeeee' : '#666';
+	const isBeingRead = useSyncExternalStore( audioPlayer.subscribe, () => {
+		const audioState = audioPlayer.getState();
+		return (
+			audioState.book === book &&
+			audioState.chapter === chapter &&
+			audioState.verse === verse &&
+			audioState.version === version
+		);
+	} );
 	return (
 		<div
 			lang={ lang }
 			className={ classnames(
 				styles.verseWrapper,
-				isCurrentRef ? styles.isCurrent : null
+				isCurrentRef ? styles.isCurrent : null,
+				isBeingRead ? styles.isBeingRead : null
 			) }
 			dir={ bible.isRtlVersion( version, book ) ? 'rtl' : 'ltr' }
 			ref={ verseWrapperRef }
@@ -63,6 +75,13 @@ export default function VerseWrapper( {
 						<CopyToClipboard
 							fill={ fill }
 							textToCopy={ verseWrapperRef }
+						/>
+						<AudioButton
+							fill={ fill }
+							book={ book }
+							chapter={ chapter }
+							verse={ verse }
+							version={ version }
 						/>
 					</span>
 				</div>

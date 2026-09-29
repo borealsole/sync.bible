@@ -1,0 +1,7 @@
+.audioButton {
+	cursor: pointer;
+
+	&:hover path {
+		fill: var(--color);
+	}
+}

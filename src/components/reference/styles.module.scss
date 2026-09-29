@@ -8,6 +8,15 @@
 	overflow-y: scroll;
 	width: 100%;
 
+	// Leave room for the audio player so the last verses can be scrolled into view.
+	:global(.audio-player-open) & {
+		padding-bottom: 80px;
+
+		@media ( max-width: 600px ) {
+			padding-bottom: 140px;
+		}
+	}
+
 	/*&.is-not-sync {
 		max-width: $total-column-width;
 	}*/
@@ -52,8 +61,20 @@
 	}
 }
 
+.heading .audio-hidden {
+	display: none;
+	position: relative;
+
+	a {
+		position: absolute;
+		top: 0;
+		left: 50px;
+	}
+}
+
 .heading:hover {
-	.copy-hidden {
+	.copy-hidden,
+	.audio-hidden {
 		display: inline;
 	}
 }
@@ -86,6 +107,11 @@
 			text-shadow: 1px 1px var(--color);
 		}
 	}
+}
+
+.isBeingRead .verse {
+	background-color: var(--active);
+	border-radius: 2px;
 }
 
 .verse {

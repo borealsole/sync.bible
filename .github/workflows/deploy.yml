@@ -39,6 +39,9 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          # Optional: enables Bible Brain audio. Leave the secret unset to use only openbible.com and text to speech.
+          VITE_BIBLE_BRAIN_KEY: ${{ secrets.BIBLE_BRAIN_KEY }}
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact

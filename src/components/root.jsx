@@ -10,6 +10,7 @@ import KeyboardShortcuts from './keyboard-shortcuts';
 import Trays from './trays';
 import WordHighlight from './word-highlight';
 import InitialView from './inital-view';
+import AudioPlayer from './audio-player';
 import styles from './root.module.scss';
 import { fetchDataAsync, settingsChange } from '../actions';
 import { rootClasses } from './utils';
@@ -104,6 +105,7 @@ export default function Root() {
 				<WordHighlight />
 				{ referenceComponent }
 				<InitialView />
+				<AudioPlayer />
 			</div>
 		</div>
 	);

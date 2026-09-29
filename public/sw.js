@@ -48,6 +48,14 @@ self.addEventListener( 'activate', ( event ) => {
 
 // Fetch - serve from cache, fallback to network
 self.addEventListener( 'fetch', ( event ) => {
+	// Let the browser handle audio (range requests) and other sites' APIs directly.
+	if (
+		event.request.destination === 'audio' ||
+		! event.request.url.startsWith( self.location.origin )
+	) {
+		return;
+	}
+
 	event.respondWith(
 		caches.match( event.request ).then( ( response ) => {
 			// If we have a cached response, return it

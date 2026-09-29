@@ -22,6 +22,10 @@ The primary data points are:
 - Related words; this is based on Strong's concordance and is not always accurate.
 - Cross references; this is data that has been collected through recieved wisdom and should be subject to scrutiny.
 
+## Audio
+
+Chapters can be read aloud from any verse. See [docs/audio.md](./docs/audio.md) for the audio sources and how to enable Bible Brain.
+
 ## Get involed
 
 To find out how to get involved with the project read the [CONTRIBUTING](./CONTRIBUTING.md) document.

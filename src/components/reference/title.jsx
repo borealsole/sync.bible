@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 // Internal
 import { setTrayVisibilityFilter, setReferenceInfo } from '../../actions';
 import CopyToClipboard from '../copy-to-clipboard';
+import AudioButton from '../audio-button';
 import styles from './styles.module.scss';
 import bible from '../../data/bible.js';
 
@@ -38,6 +39,16 @@ export default function Title( {
 					version={ version }
 				/>
 			</span>
+			{ chapter && (
+				<span className={ styles.audioHidden }>
+					<AudioButton
+						fill={ '#999' }
+						book={ book }
+						chapter={ chapter }
+						version={ version }
+					/>
+				</span>
+			) }
 		</h1>
 	);
 }
