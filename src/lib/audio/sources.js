@@ -18,6 +18,7 @@ import { getVersionLanguage, toIso6393, toSpeechLanguage } from './languages';
  *   attribution: string,   credit / licence shown in the player
  *   type: 'file' | 'speech',
  *   exactMatch: boolean,   true when the recording is of the same translation as the text
+ *   note: string,          optional caveat shown in the player
  *   getChapter: async ( { book, chapter } ) => ( { url, timestamps } ) // type 'file' only
  *   lang: string,          BCP 47 language for the speech synthesiser // type 'speech' only
  * }
@@ -73,6 +74,155 @@ function getOpenBibleSources( version ) {
 			};
 		},
 	} ) );
+}
+
+/**
+ * Global Bible Tools - Hebrew and Greek recordings with verse timings, as used
+ * by their study app (https://github.com/globalbibletools/study-app).
+ * The MP3s are streamed from their CDN. It doesn't send CORS headers, so the
+ * verse timings are copied into public/audio-timings/gbt by
+ * scripts/fetch-gbt-audio-timings.js.
+ */
+const GBT_BASE_URL = 'https://assets.globalbibletools.com/audio/v1';
+const GBT_TIMINGS_PATH = 'audio-timings/gbt';
+const GBT_RECORDINGS = [
+	{
+		id: 'HEB',
+		testament: 'OT',
+		language: 'hbo',
+		label: 'Hebrew read by Abraham Shmueloff',
+	},
+	{
+		id: 'RDB',
+		testament: 'OT',
+		language: 'hbo',
+		label: 'Hebrew read by Rabbi Dan Beeri',
+	},
+	{
+		id: 'TK',
+		testament: 'NT',
+		language: 'grc',
+		label: 'Textus Receptus read by Theo Karvounakis (modern pronunciation)',
+		// The versions that are this text, others get a note that the wording may differ.
+		versions: [ 'TR', 'Elzevir', 'grctreb' ],
+		note: 'This recording reads the Textus Receptus, which differs from this text in places.',
+	},
+	{
+		id: 'JH',
+		testament: 'NT',
+		language: 'grc',
+		label: 'Statistical Restoration GNT read by Jonathan Hohstadt',
+		versions: [ 'StatResGNT', 'grcsr2022eb' ],
+		note: 'This recording reads the Statistical Restoration Greek New Testament, which differs from this text in places.',
+	},
+];
+
+let gbtIndexPromise;
+const gbtTimingsCache = new Map();
+
+function fetchJson( url ) {
+	return fetch( url ).then( ( response ) => {
+		if ( ! response.ok ) {
+			throw new Error( `Couldn't load ${ url } (${ response.status })` );
+		}
+		return response.json();
+	} );
+}
+
+// Which books each recording has, e.g. { HEB: { testament: 'OT', books: [ 'Gen', ... ] } }
+function getGbtIndex() {
+	if ( ! gbtIndexPromise ) {
+		gbtIndexPromise = fetchJson( `${ GBT_TIMINGS_PATH }/index.json` ).catch(
+			( error ) => {
+				gbtIndexPromise = null;
+				throw error;
+			}
+		);
+	}
+	return gbtIndexPromise;
+}
+
+function getGbtTimings( recording, bookCode ) {
+	const url = `${ GBT_TIMINGS_PATH }/${ recording }/${ bookCode }.json`;
+	if ( ! gbtTimingsCache.has( url ) ) {
+		gbtTimingsCache.set(
+			url,
+			fetchJson( url ).catch( ( error ) => {
+				gbtTimingsCache.delete( url );
+				throw error;
+			} )
+		);
+	}
+	return gbtTimingsCache.get( url );
+}
+
+// Global Bible Tools use title-cased USFM codes, e.g. "Gen", "1Sa".
+function getGbtBookCode( book ) {
+	const code = USFM_CODES[ getBookIndex( book ) ];
+	return code && code[ 0 ] + code.slice( 1 ).toLowerCase();
+}
+
+async function getGbtSources( version, book ) {
+	const language = getVersionLanguage( version, book );
+	const testament = isOldTestament( book ) ? 'OT' : 'NT';
+	const bookCode = getGbtBookCode( book );
+	const recordings = GBT_RECORDINGS.filter(
+		( recording ) =>
+			recording.language === language && recording.testament === testament
+	);
+	if ( ! recordings.length || ! bookCode ) {
+		return [];
+	}
+
+	let index;
+	try {
+		index = await getGbtIndex();
+	} catch ( error ) {
+		console.warn( error );
+		return [];
+	}
+
+	return recordings
+		.filter( ( { id } ) => index[ id ]?.books.includes( bookCode ) )
+		.map( ( recording ) => ( {
+			id: `gbt:${ recording.id }`,
+			label: recording.label,
+			attribution: 'Audio from Global Bible Tools',
+			type: 'file',
+			exactMatch: true,
+			note:
+				recording.versions && ! recording.versions.includes( version )
+					? recording.note
+					: null,
+			getChapter: async ( { book: chapterBook, chapter } ) => {
+				const chapterBookCode = getGbtBookCode( chapterBook );
+				const timings = await getGbtTimings(
+					recording.id,
+					chapterBookCode
+				);
+				const verses = timings[ chapter - 1 ];
+				if ( ! verses ) {
+					throw new Error( 'This chapter hasn’t been recorded yet.' );
+				}
+
+				const timestamps = {};
+				verses.forEach( ( start, index ) => {
+					if ( start !== null ) {
+						timestamps[ index + 1 ] = start;
+					}
+				} );
+
+				return {
+					url: `${ GBT_BASE_URL }/${ recording.testament }/${
+						recording.id
+					}/${ chapterBookCode }/${ String( chapter ).padStart(
+						3,
+						'0'
+					) }.mp3`,
+					timestamps,
+				};
+			},
+		} ) );
 }
 
 /**
@@ -254,10 +404,14 @@ export async function getAudioSources( version, book ) {
 		return [];
 	}
 
-	const bibleBrainSources = await getBibleBrainSources( version, book );
+	const [ gbtSources, bibleBrainSources ] = await Promise.all( [
+		getGbtSources( version, book ),
+		getBibleBrainSources( version, book ),
+	] );
 
 	return [
 		...getOpenBibleSources( version ),
+		...gbtSources,
 		...bibleBrainSources.filter( ( { exactMatch } ) => exactMatch ),
 		...getSpeechSources( version, book ),
 		// Recordings of a different translation in the same language.

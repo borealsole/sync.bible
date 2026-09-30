@@ -15,8 +15,30 @@ Sources are tried in this order for the version being read. The first one availa
 | Source | Versions | Verse level | Needs | Licence |
 | --- | --- | --- | --- | --- |
 | [openbible.com](https://openbible.com/audio/) | BSB (7 narrators), KJV (2 narrators) | No (chapter files) | Nothing | Public domain |
+| [Global Bible Tools](https://github.com/globalbibletools/study-app) | Hebrew OT and Greek NT versions (e.g. Original, WLC, TR, SBLGNT) | Yes | Nothing | Not stated, see below |
 | [Bible Brain](https://www.faithcomesbyhearing.com/bible-brain/developer-documentation) | Matches on version abbreviation (e.g. `ENGKJV`), otherwise offers other recordings in the same language | Yes, when the recording has timestamps | Free API key | Free to stream; many recordings are copyrighted, so don't download or cache them |
 | Browser text to speech | Every version | Yes | A voice for the language on the device | n/a |
+
+### Global Bible Tools (Hebrew and Greek)
+
+These are the recordings used by the Global Bible Tools study app, streamed from `assets.globalbibletools.com`:
+
+| Recording | Text | Coverage |
+| --- | --- | --- |
+| Abraham Shmueloff | Hebrew | Whole Old Testament |
+| Rabbi Dan Beeri | Hebrew | 29 Old Testament books (some Psalms missing) |
+| Theo Karvounakis | Textus Receptus, modern pronunciation | Whole New Testament (except 2 Timothy 4) |
+| Jonathan Hohstadt | Statistical Restoration GNT | Matthew |
+
+They're offered for versions whose language is Hebrew (`hbo`) in the Old Testament or Greek (`grc`) in the New Testament. The player notes when the Greek recording reads a different text from the one on screen (for example, the Original NT is Tischendorf's 8th edition).
+
+Their server doesn't send CORS headers, so the browser can play the MP3s but can't read the verse timing files. The timings are copied into `public/audio-timings/gbt` instead. To pick up new recordings, run:
+
+```sh
+node scripts/fetch-gbt-audio-timings.js
+```
+
+The study app's code is public domain (CC0), but the licence for the recordings isn't stated. Check with Global Bible Tools (contact@ethnos.dev) that they're happy for sync.bible to stream them from their CDN.
 
 ### Bible Brain
 
