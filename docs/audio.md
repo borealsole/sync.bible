@@ -4,6 +4,7 @@ sync.bible can read a chapter aloud, starting from the beginning or from any ver
 
 - Hover over a chapter title and click the speaker icon to listen to the chapter.
 - Hover over a verse and click the speaker icon under the verse number to listen from that verse.
+- The speaker icons only appear when there's something to play: a recording for the version, or a text-to-speech voice for its language on the device.
 - The player at the bottom of the screen lets you pause, skip chapters, pick a recording, change the speed and carry on to the next chapter automatically.
 
 The code lives in `src/lib/audio` (sources and the player) and `src/components/audio-player` / `src/components/audio-button` (UI).
@@ -17,7 +18,7 @@ Sources are tried in this order for the version being read. The first one availa
 | [openbible.com](https://openbible.com/audio/) | BSB (7 narrators), KJV (2 narrators) | No (chapter files) | Nothing | Public domain |
 | [Global Bible Tools](https://github.com/globalbibletools/study-app) | Hebrew OT and Greek NT versions (e.g. Original, WLC, TR, SBLGNT) | Yes | Nothing | Not stated, see below |
 | [Bible Brain](https://www.faithcomesbyhearing.com/bible-brain/developer-documentation) | Matches on version abbreviation (e.g. `ENGKJV`), otherwise offers other recordings in the same language | Yes, when the recording has timestamps | Free API key | Free to stream; many recordings are copyrighted, so don't download or cache them |
-| Browser text to speech | Every version | Yes | A voice for the language on the device | n/a |
+| Browser text to speech | Every version, where the device has a voice for its language | Yes | A voice for the language on the device | n/a |
 
 ### Global Bible Tools (Hebrew and Greek)
 

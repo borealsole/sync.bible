@@ -377,15 +377,38 @@ async function getBibleBrainSources( version, book ) {
 }
 
 /**
+ * A voice on this device for a BCP 47 language, e.g. "en" or "zh-CN".
+ * Voices can load after the page does, see onVoicesChanged.
+ */
+export function findSpeechVoice( lang ) {
+	if ( typeof window === 'undefined' || ! window.speechSynthesis ) {
+		return null;
+	}
+
+	const [ language, region ] = lang.toLowerCase().split( '-' );
+	const voices = window.speechSynthesis.getVoices().filter( ( voice ) => {
+		const [ voiceLanguage, voiceRegion ] = voice.lang
+			.toLowerCase()
+			.replace( '_', '-' )
+			.split( '-' );
+		return (
+			voiceLanguage === language && ( ! region || voiceRegion === region )
+		);
+	} );
+
+	return voices.find( ( voice ) => voice.default ) || voices[ 0 ] || null;
+}
+
+/**
  * The browser's own text to speech. Works offline with every version, and can
  * start at any verse, but quality and language coverage depend on the device.
  */
 function getSpeechSources( version, book ) {
-	if ( typeof window === 'undefined' || ! window.speechSynthesis ) {
+	const lang = toSpeechLanguage( getVersionLanguage( version, book ) );
+	if ( ! findSpeechVoice( lang ) ) {
 		return [];
 	}
 
-	const lang = toSpeechLanguage( getVersionLanguage( version, book ) );
 	return [
 		{
 			id: 'speech',

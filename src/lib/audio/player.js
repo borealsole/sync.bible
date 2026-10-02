@@ -1,5 +1,5 @@
 // Internal
-import { getAudioSources } from './sources';
+import { getAudioSources, findSpeechVoice } from './sources';
 import { getNumberOfChapters } from './books';
 import { getVerseText } from '../reference-text';
 import { mapVersionToData } from '../reference';
@@ -162,11 +162,7 @@ function speakFrom( verse, currentPlayId ) {
 	const utterance = new SpeechSynthesisUtterance( text );
 	utterance.lang = source.lang;
 	utterance.rate = state.rate;
-	const voice = window.speechSynthesis
-		.getVoices()
-		.find( ( { lang } ) =>
-			lang.toLowerCase().startsWith( source.lang.toLowerCase() )
-		);
+	const voice = findSpeechVoice( source.lang );
 	if ( voice ) {
 		utterance.voice = voice;
 	}

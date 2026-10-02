@@ -1,4 +1,5 @@
 // External
+import { useEffect, useSyncExternalStore } from 'react';
 import PropTypes from 'prop-types';
 import { useStore } from 'react-redux';
 
@@ -7,6 +8,7 @@ import VolumeUpSvg from '../svg/volume-up';
 import styles from './styles.module.scss';
 import { audioPlayer } from '../../lib/audio/player';
 import { getBookIndex } from '../../lib/audio/books';
+import { audioAvailability } from '../../lib/audio/availability';
 
 /** Button to listen to a chapter, starting from an optional verse */
 export default function AudioButton( {
@@ -17,9 +19,20 @@ export default function AudioButton( {
 	fill,
 } ) {
 	const store = useStore();
-
 	// Books without a single canonical chapter (e.g. the Harmony) have no audio.
-	if ( getBookIndex( book ) === -1 ) {
+	const hasBook = getBookIndex( book ) > -1;
+	const isAvailable = useSyncExternalStore( audioAvailability.subscribe, () =>
+		audioAvailability.get( version, book )
+	);
+
+	useEffect( () => {
+		if ( hasBook && isAvailable === undefined ) {
+			audioAvailability.load( version, book );
+		}
+	}, [ hasBook, isAvailable, version, book ] );
+
+	// Hide the button until we know there's a recording or voice to play.
+	if ( ! hasBook || ! isAvailable ) {
 		return null;
 	}
 
