@@ -10,11 +10,7 @@
 
 	// Leave room for the audio player so the last verses can be scrolled into view.
 	:global(.audio-player-open) & {
-		padding-bottom: 80px;
-
-		@media ( max-width: 600px ) {
-			padding-bottom: 140px;
-		}
+		padding-bottom: var(--audio-player-height, 80px);
 	}
 
 	/*&.is-not-sync {

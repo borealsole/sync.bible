@@ -1,5 +1,5 @@
 // External
-import { useEffect, useSyncExternalStore } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { useSelector } from 'react-redux';
 
 // Internal
@@ -42,8 +42,32 @@ export default function AudioPlayer() {
 			: DOCK_HEIGHT;
 	const isOpen = !! book;
 
+	const playerRef = useRef( null );
+
 	useEffect( () => {
 		document.body.classList.toggle( 'audio-player-open', isOpen );
+	}, [ isOpen ] );
+
+	// Let the reference columns leave room for the player, whose height
+	// depends on the font size chosen in settings.
+	useEffect( () => {
+		const player = playerRef.current;
+		if ( ! isOpen || ! player ) {
+			return;
+		}
+
+		const observer = new ResizeObserver( () => {
+			document.body.style.setProperty(
+				'--audio-player-height',
+				`${ player.offsetHeight }px`
+			);
+		} );
+		observer.observe( player );
+
+		return () => {
+			observer.disconnect();
+			document.body.style.removeProperty( '--audio-player-height' );
+		};
 	}, [ isOpen ] );
 
 	// Keep the player's copy of the text up to date for text to speech.
@@ -68,6 +92,7 @@ export default function AudioPlayer() {
 			role="region"
 			aria-label="Audio"
 			style={ { left } }
+			ref={ playerRef }
 		>
 			<div className={ styles.controls }>
 				<button
