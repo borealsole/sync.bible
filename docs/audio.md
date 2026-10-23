@@ -22,7 +22,7 @@ Sources are tried in this order for the version being read. The first one availa
 
 ### Global Bible Tools (Hebrew and Greek)
 
-These are the recordings used by the Global Bible Tools study app. We keep a copy in our own S3 bucket (`sync-bible-audio-s3-329638938782-eu-north-1-an`, eu-north-1), served through CloudFront at `https://d27klxkmkurpui.cloudfront.net/audio/v1/`. The bucket is private and only the CloudFront distribution can read it.
+These are the recordings used by the Global Bible Tools study app. We keep a copy in our own private S3 bucket, served through CloudFront at `https://d27klxkmkurpui.cloudfront.net/audio/v1/`. The bucket is private and only the CloudFront distribution can read it.
 
 | Recording | Text | Coverage |
 | --- | --- | --- |
@@ -38,7 +38,7 @@ To pick up new or updated recordings from Global Bible Tools:
 
 ```sh
 # Copy any new books into the bucket (needs AWS credentials for the bucket)
-scripts/mirror-gbt-audio.sh sync-bible-audio-s3-329638938782-eu-north-1-an <aws-profile>
+scripts/mirror-gbt-audio.sh <bucket> <aws-profile>
 
 # Update the verse timings the app uses, then commit public/audio-timings
 node scripts/fetch-gbt-audio-timings.js
