@@ -16,30 +16,37 @@ Sources are tried in this order for the version being read. The first one availa
 | Source | Versions | Verse level | Needs | Licence |
 | --- | --- | --- | --- | --- |
 | [openbible.com](https://openbible.com/audio/) | BSB (7 narrators), KJV (2 narrators) | No (chapter files) | Nothing | Public domain |
-| [Global Bible Tools](https://github.com/globalbibletools/study-app) | Hebrew OT and Greek NT versions (e.g. Original, WLC, TR, SBLGNT) | Yes | Nothing | Not stated, see below |
+| [Global Bible Tools](https://github.com/globalbibletools/study-app), hosted on our CloudFront | Hebrew OT and Greek NT versions (e.g. Original, WLC, TR, SBLGNT) | Yes | Nothing | Not stated, see below |
 | [Bible Brain](https://www.faithcomesbyhearing.com/bible-brain/developer-documentation) | Matches on version abbreviation (e.g. `ENGKJV`), otherwise offers other recordings in the same language | Yes, when the recording has timestamps | Free API key | Free to stream; many recordings are copyrighted, so don't download or cache them |
 | Browser text to speech | Every version, where the device has a voice for its language | Yes | A voice for the language on the device | n/a |
 
 ### Global Bible Tools (Hebrew and Greek)
 
-These are the recordings used by the Global Bible Tools study app, streamed from `assets.globalbibletools.com`:
+These are the recordings used by the Global Bible Tools study app. We keep a copy in our own S3 bucket (`sync-bible-audio-s3-329638938782-eu-north-1-an`, eu-north-1), served through CloudFront at `https://d27klxkmkurpui.cloudfront.net/audio/v1/`. The bucket is private and only the CloudFront distribution can read it.
 
 | Recording | Text | Coverage |
 | --- | --- | --- |
 | Abraham Shmueloff | Hebrew | Whole Old Testament |
-| Rabbi Dan Beeri | Hebrew | 29 Old Testament books (some Psalms missing) |
-| Theo Karvounakis | Textus Receptus, modern pronunciation | Whole New Testament (except 2 Timothy 4) |
+| Rabbi Dan Beeri | Hebrew | 29 Old Testament books |
+| Theo Karvounakis | Textus Receptus, modern pronunciation | Whole New Testament |
+| Christophe Rico | Greek | 12 New Testament books |
 | Jonathan Hohstadt | Statistical Restoration GNT | Matthew |
 
 They're offered for versions whose language is Hebrew (`hbo`) in the Old Testament or Greek (`grc`) in the New Testament. The player notes when the Greek recording reads a different text from the one on screen (for example, the Original NT is Tischendorf's 8th edition).
 
-Their server doesn't send CORS headers, so the browser can play the MP3s but can't read the verse timing files. The timings are copied into `public/audio-timings/gbt` instead. To pick up new recordings, run:
+To pick up new or updated recordings from Global Bible Tools:
 
 ```sh
+# Copy any new books into the bucket (needs AWS credentials for the bucket)
+scripts/mirror-gbt-audio.sh sync-bible-audio-s3-329638938782-eu-north-1-an <aws-profile>
+
+# Update the verse timings the app uses, then commit public/audio-timings
 node scripts/fetch-gbt-audio-timings.js
 ```
 
-The study app's code is public domain (CC0), but the licence for the recordings isn't stated. Check with Global Bible Tools (contact@ethnos.dev) that they're happy for sync.bible to stream them from their CDN.
+The verse timings live in `public/audio-timings/gbt` so the player doesn't need CORS access to the bucket.
+
+The study app's code is public domain (CC0), but the licence for the recordings isn't stated. Check with Global Bible Tools (contact@ethnos.dev) that they're happy for sync.bible to host and serve copies.
 
 ### Bible Brain
 

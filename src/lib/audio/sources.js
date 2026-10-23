@@ -79,11 +79,11 @@ function getOpenBibleSources( version ) {
 /**
  * Global Bible Tools - Hebrew and Greek recordings with verse timings, as used
  * by their study app (https://github.com/globalbibletools/study-app).
- * The MP3s are streamed from their CDN. It doesn't send CORS headers, so the
- * verse timings are copied into public/audio-timings/gbt by
- * scripts/fetch-gbt-audio-timings.js.
+ * The MP3s are copied to our S3 bucket by scripts/mirror-gbt-audio.sh and
+ * served through CloudFront. The verse timings are copied into
+ * public/audio-timings/gbt by scripts/fetch-gbt-audio-timings.js.
  */
-const GBT_BASE_URL = 'https://assets.globalbibletools.com/audio/v1';
+const GBT_BASE_URL = 'https://d27klxkmkurpui.cloudfront.net/audio/v1';
 const GBT_TIMINGS_PATH = 'audio-timings/gbt';
 const GBT_RECORDINGS = [
 	{
@@ -114,6 +114,15 @@ const GBT_RECORDINGS = [
 		label: 'Statistical Restoration GNT read by Jonathan Hohstadt',
 		versions: [ 'StatResGNT', 'grcsr2022eb' ],
 		note: 'This recording reads the Statistical Restoration Greek New Testament, which differs from this text in places.',
+	},
+	{
+		id: 'PCR',
+		testament: 'NT',
+		language: 'grc',
+		label: 'Greek read by Christophe Rico',
+		// The edition read isn't documented, so always mention it may differ.
+		versions: [],
+		note: 'This recording may follow a different Greek text from this one in places.',
 	},
 ];
 

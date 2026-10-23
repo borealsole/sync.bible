@@ -2,9 +2,10 @@
  * Downloads the verse timings for the Global Bible Tools Hebrew and Greek
  * recordings and saves them as JSON in public/audio-timings.
  *
- * The recordings are streamed from assets.globalbibletools.com, but that
- * server doesn't send CORS headers, so the browser can't read the timing
- * files directly. Run this again to pick up new or updated recordings:
+ * The recordings are copied to our S3 bucket by scripts/mirror-gbt-audio.sh
+ * and served through CloudFront. Keeping the timings in the app means the
+ * player can use them without any CORS setup. Run this again after mirroring
+ * new or updated recordings:
  *
  *   node scripts/fetch-gbt-audio-timings.js
  *
@@ -16,7 +17,8 @@
 import { Buffer } from 'buffer';
 import { mkdirSync, writeFileSync } from 'fs';
 
-const BASE_URL = 'https://assets.globalbibletools.com/audio/v1';
+// Our CloudFront copy, so the timings match the files sync.bible plays.
+const BASE_URL = 'https://d27klxkmkurpui.cloudfront.net/audio/v1';
 const OUTPUT_DIR = './public/audio-timings/gbt';
 const RECORD_SIZE = 11;
 const BOOKS = [
