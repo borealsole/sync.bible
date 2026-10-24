@@ -147,11 +147,6 @@ export default function AudioPlayer() {
 						This is a recording of a different translation.
 					</div>
 				) }
-				{ source && (
-					<div className={ styles.attribution }>
-						{ source.attribution }
-					</div>
-				) }
 			</div>
 
 			<div className={ styles.options }>

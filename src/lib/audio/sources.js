@@ -15,7 +15,6 @@ import { getVersionLanguage, toIso6393, toSpeechLanguage } from './languages';
  * {
  *   id: string,            unique id, used to remember the chosen source
  *   label: string,         shown in the player
- *   attribution: string,   credit / licence shown in the player
  *   type: 'file' | 'speech',
  *   exactMatch: boolean,   true when the recording is of the same translation as the text
  *   note: string,          optional caveat shown in the player
@@ -61,7 +60,6 @@ function getOpenBibleSources( version ) {
 		label: narrator
 			? `${ version } read by ${ narrator }`
 			: `${ version } (openbible.com)`,
-		attribution: 'Public domain audio from openbible.com',
 		type: 'file',
 		exactMatch: true,
 		getChapter: async ( { book, chapter } ) => {
@@ -196,7 +194,6 @@ async function getGbtSources( version, book ) {
 		.map( ( recording ) => ( {
 			id: `gbt:${ recording.id }`,
 			label: recording.label,
-			attribution: 'Audio from Global Bible Tools',
 			type: 'file',
 			exactMatch: true,
 			note:
@@ -350,7 +347,6 @@ async function getBibleBrainSources( version, book ) {
 			label: `${ bibleData.vname || bibleData.name } (${
 				bibleData.abbr
 			})`,
-			attribution: 'Audio from Bible Brain / Faith Comes By Hearing',
 			type: 'file',
 			exactMatch,
 			getChapter: async ( { book: chapterBook, chapter } ) => {
@@ -422,7 +418,6 @@ function getSpeechSources( version, book ) {
 		{
 			id: 'speech',
 			label: 'Device voice (text to speech)',
-			attribution: 'Read aloud by your browser',
 			type: 'speech',
 			exactMatch: true,
 			lang,

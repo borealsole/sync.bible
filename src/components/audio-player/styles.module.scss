@@ -69,13 +69,11 @@
 }
 
 .version,
-.status,
-.attribution {
+.status {
 	color: var(--color-dimmed);
 	font-weight: normal;
 }
 
-.attribution,
 .notice,
 .error {
 	font-size: 0.857em; // 12px at the default size
