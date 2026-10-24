@@ -47,6 +47,8 @@ node scripts/fetch-gbt-audio-timings.js
 
 The verse timings live in `public/audio-timings/gbt` so the player doesn't need CORS access to the bucket.
 
+To keep costs down, a CloudFront Function (`cloudfront/block-audio-hotlinking.js`, deployed as `sync-bible-block-audio-hotlinking` on the viewer request of the distribution) returns 403 when another website embeds the audio. Requests from sync.bible, localhost and requests with no Referer are allowed. To change it, update the code in CloudFront, test it, then publish it.
+
 The study app's code is public domain (CC0), Global Bible Tools (contact@ethnos.dev) are happy for sync.bible to host and serve copies of the audio files. Most of which are public domain, specific permission requested from Christophe Rico for his recordings.
 
 ### Bible Brain
