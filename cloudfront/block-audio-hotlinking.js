@@ -12,6 +12,8 @@
 
 var ALLOWED_HOSTS = [ 'sync.bible', 'www.sync.bible', 'localhost', '127.0.0.1' ];
 
+// CloudFront calls handler, so it looks unused here.
+// eslint-disable-next-line no-unused-vars
 function handler( event ) {
 	var request = event.request;
 	var referer = request.headers.referer;
@@ -20,7 +22,7 @@ function handler( event ) {
 		return request;
 	}
 
-	var match = referer.value.match( /^https?:\/\/([^\/:?#]+)/i );
+	var match = referer.value.match( /^https?:\/\/([^/:?#]+)/i );
 	var host = match ? match[ 1 ].toLowerCase() : '';
 
 	if ( ALLOWED_HOSTS.indexOf( host ) !== -1 ) {
