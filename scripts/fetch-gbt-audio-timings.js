@@ -21,6 +21,9 @@ import { mkdirSync, writeFileSync } from 'fs';
 const BASE_URL = 'https://d27klxkmkurpui.cloudfront.net/audio/v1';
 const OUTPUT_DIR = './public/audio-timings/gbt';
 const RECORD_SIZE = 11;
+// Recordings we don't have permission to host. PCR (Christophe Rico) is awaiting
+// permission from the Polis Institute; keep this in step with mirror-gbt-audio.sh.
+const EXCLUDED_RECORDINGS = [ 'PCR' ];
 const BOOKS = [
 	'Gen',
 	'Exo',
@@ -134,7 +137,10 @@ async function main() {
 	const index = {};
 	for ( const { id } of books ) {
 		const [ testament, recording, book ] = id.split( '/' );
-		if ( ! BOOKS.includes( book ) ) {
+		if (
+			! BOOKS.includes( book ) ||
+			EXCLUDED_RECORDINGS.includes( recording )
+		) {
 			continue;
 		}
 

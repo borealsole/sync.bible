@@ -1,6 +1,6 @@
 import bible from '../../data/bible.js';
 
-// USFM book codes, used by Bible Brain (in the same order as bible.Data.books).
+// USFM book codes (in the same order as bible.Data.books).
 export const USFM_CODES = [
 	'GEN',
 	'EXO',

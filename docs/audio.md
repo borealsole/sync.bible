@@ -17,8 +17,7 @@ Sources are tried in this order for the version being read. The first one availa
 | Source | Versions | Verse level | Needs | Licence |
 | --- | --- | --- | --- | --- |
 | [openbible.com](https://openbible.com/audio/) | BSB (7 narrators), KJV (2 narrators) | No (chapter files) | Nothing | Public domain |
-| [Global Bible Tools](https://github.com/globalbibletools/study-app), hosted on our CloudFront | Hebrew OT and Greek NT versions (e.g. Original, WLC, TR, SBLGNT) | Yes | Nothing | Public domain except Rico recordings, mirrored with permission |
-| [Bible Brain](https://www.faithcomesbyhearing.com/bible-brain/developer-documentation) | Matches on version abbreviation (e.g. `ENGKJV`), otherwise offers other recordings in the same language | Yes, when the recording has timestamps | Free API key (not yet implemented) | Free to stream; many recordings are copyrighted, so don't download or cache them |
+| [Global Bible Tools](https://github.com/globalbibletools/study-app), hosted on our CloudFront | Hebrew OT and Greek NT versions (e.g. Original, WLC, TR, SBLGNT) | Yes | Nothing | Hosted with Global Bible Tools' permission, see below |
 | Browser text to speech | Every version, where the device has a voice for its language | Yes | A voice for the language on the device | n/a |
 
 ### Global Bible Tools (Hebrew and Greek)
@@ -30,7 +29,6 @@ These are the recordings used by the Global Bible Tools study app. We have permi
 | Abraham Shmueloff | Hebrew | Whole Old Testament |
 | Rabbi Dan Beeri | Hebrew | 29 Old Testament books |
 | Theo Karvounakis | Textus Receptus, modern pronunciation | Whole New Testament |
-| Christophe Rico | Greek | 12 New Testament books |
 | Jonathan Hohstadt | Statistical Restoration GNT | Matthew |
 
 They're offered for versions whose language is Hebrew (`hbo`) in the Old Testament or Greek (`grc`) in the New Testament. The player notes when the Greek recording reads a different text from the one on screen (for example, the Original NT is Tischendorf's 8th edition).
@@ -49,18 +47,15 @@ The verse timings live in `public/audio-timings/gbt` so the player doesn't need 
 
 To keep costs down, a CloudFront Function (`cloudfront/block-audio-hotlinking.js`, deployed as `sync-bible-block-audio-hotlinking` on the viewer request of the distribution) returns 403 when another website embeds the audio. Requests from sync.bible, localhost and requests with no Referer are allowed. To change it, update the code in CloudFront, test it, then publish it.
 
-The study app's code is public domain (CC0), Global Bible Tools (contact@ethnos.dev) are happy for sync.bible to host and serve copies of the audio files. Most of which are public domain, specific permission requested from Christophe Rico for his recordings.
+The study app's code is public domain (CC0), and Global Bible Tools (contact@ethnos.dev) are happy for sync.bible to host and serve copies of the audio files, most of which are public domain.
 
-### Bible Brain
+#### Christophe Rico (awaiting permission)
 
-Bible Brain is only used if an API key is provided at build time, the capability is built but we have not yet got a key so it is not implemented:
-
-Bible Brain uses ISO 639-3 language codes and its own bible ids. `src/lib/audio/languages.js` maps the language codes used in `bible.js`, and `BIBLE_BRAIN_BIBLE_IDS` in `src/lib/audio/sources.js` can be used to pin a version to a specific Bible Brain bible where the abbreviations don't line up.
-
-When the recording is of a different translation than the text on screen, the player says so.
+Global Bible Tools also publish Christophe Rico's Greek readings of 12 New Testament books (recording id `PCR`). These are owned by the Polis Institute (polisjerusalem.org), and hosting copies needs approval from its Executive Committee, which we are requesting. Until it's approved they are not in the bucket or the app, and `PCR` is excluded in both `scripts/mirror-gbt-audio.sh` and `scripts/fetch-gbt-audio-timings.js`. If permission is granted, remove it from those exclusion lists, re-run both scripts, and add the recording back to `GBT_RECORDINGS` in `src/lib/audio/sources.js`.
 
 ## Other options considered
 
+- **Bible Brain (Faith Comes By Hearing)** – audio in 1,800+ languages, some with verse timestamps, but it needs an API key and our key request went unanswered. Support for it was removed; it could be added back if a key becomes available.
 - **API.Bible (American Bible Society)** – has an audio endpoint and a free key, but only a small number of audio bibles, non-commercial terms and required usage reporting (FUMS).
 - **LibriVox / Internet Archive** – public domain volunteer readings of the KJV, ASV, WEB and others. Free, but file naming and chapter splits are inconsistent, so each version would need a hand-built index.
 - **WordProject** – chapter MP3s in about 40 languages, but copyrighted and requires permission to embed.

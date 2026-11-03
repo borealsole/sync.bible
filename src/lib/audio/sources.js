@@ -6,7 +6,7 @@ import {
 	USFM_CODES,
 	isOldTestament,
 } from './books';
-import { getVersionLanguage, toIso6393, toSpeechLanguage } from './languages';
+import { getVersionLanguage, toSpeechLanguage } from './languages';
 
 /**
  * Audio sources.
@@ -16,7 +16,6 @@ import { getVersionLanguage, toIso6393, toSpeechLanguage } from './languages';
  *   id: string,            unique id, used to remember the chosen source
  *   label: string,         shown in the player
  *   type: 'file' | 'speech',
- *   exactMatch: boolean,   true when the recording is of the same translation as the text
  *   note: string,          optional caveat shown in the player
  *   getChapter: async ( { book, chapter } ) => ( { url, timestamps } ) // type 'file' only
  *   lang: string,          BCP 47 language for the speech synthesiser // type 'speech' only
@@ -61,7 +60,6 @@ function getOpenBibleSources( version ) {
 			? `${ version } read by ${ narrator }`
 			: `${ version } (openbible.com)`,
 		type: 'file',
-		exactMatch: true,
 		getChapter: async ( { book, chapter } ) => {
 			const bookIndex = getBookIndex( book );
 			const bookNumber = String( bookIndex + 1 ).padStart( 2, '0' );
@@ -112,15 +110,6 @@ const GBT_RECORDINGS = [
 		label: 'Statistical Restoration GNT read by Jonathan Hohstadt',
 		versions: [ 'StatResGNT', 'grcsr2022eb' ],
 		note: 'This recording reads the Statistical Restoration Greek New Testament, which differs from this text in places.',
-	},
-	{
-		id: 'PCR',
-		testament: 'NT',
-		language: 'grc',
-		label: 'Greek read by Christophe Rico',
-		// The edition read isn't documented, so always mention it may differ.
-		versions: [],
-		note: 'This recording may follow a different Greek text from this one in places.',
 	},
 ];
 
@@ -195,7 +184,6 @@ async function getGbtSources( version, book ) {
 			id: `gbt:${ recording.id }`,
 			label: recording.label,
 			type: 'file',
-			exactMatch: true,
 			note:
 				recording.versions && ! recording.versions.includes( version )
 					? recording.note
@@ -227,156 +215,6 @@ async function getGbtSources( version, book ) {
 					) }.mp3`,
 					timestamps,
 				};
-			},
-		} ) );
-}
-
-/**
- * Bible Brain (Faith Comes By Hearing) - audio in 1,800+ languages, with verse
- * timestamps for many recordings. Needs a free API key from
- * https://www.faithcomesbyhearing.com/bible-brain/developer-documentation
- * set as VITE_BIBLE_BRAIN_KEY at build time. Many recordings are copyrighted and
- * licensed for streaming only, so they must not be downloaded or cached.
- */
-const BIBLE_BRAIN_API = 'https://4.dbt.io/api';
-const BIBLE_BRAIN_KEY = import.meta.env.VITE_BIBLE_BRAIN_KEY;
-
-// Explicit Bible Brain bible ids for versions where the abbreviations don't line up.
-// e.g. WEB: 'ENGWEB'
-const BIBLE_BRAIN_BIBLE_IDS = {};
-
-const bibleBrainCache = new Map();
-
-async function bibleBrainFetch( path, params = {} ) {
-	const query = new URLSearchParams( {
-		v: '4',
-		key: BIBLE_BRAIN_KEY,
-		...params,
-	} );
-	const url = `${ BIBLE_BRAIN_API }${ path }?${ query }`;
-	if ( ! bibleBrainCache.has( url ) ) {
-		bibleBrainCache.set(
-			url,
-			fetch( url ).then( ( response ) => {
-				if ( ! response.ok ) {
-					throw new Error(
-						`Bible Brain request failed (${ response.status })`
-					);
-				}
-				return response.json();
-			} )
-		);
-	}
-
-	try {
-		return await bibleBrainCache.get( url );
-	} catch ( error ) {
-		bibleBrainCache.delete( url );
-		throw error;
-	}
-}
-
-// Does a fileset contain audio for this book? Sizes are C (complete), OT, NT, or partial (OTP, NTP, P).
-function filesetCoversBook( fileset, book ) {
-	const testament = isOldTestament( book ) ? 'OT' : 'NT';
-	return [ 'C', testament, testament + 'P', 'P' ].includes( fileset.size );
-}
-
-function getAudioFilesets( bibleData, book ) {
-	const filesets = Object.values( bibleData.filesets || {} ).flat();
-	return filesets
-		.filter(
-			( fileset ) =>
-				[ 'audio', 'audio_drama' ].includes( fileset.type ) &&
-				filesetCoversBook( fileset, book )
-		)
-		.sort( ( a, b ) => {
-			// Prefer complete (non partial) and non dramatised recordings.
-			const score = ( fileset ) =>
-				( fileset.size.endsWith( 'P' ) ? 2 : 0 ) +
-				( fileset.type === 'audio_drama' ? 1 : 0 );
-			return score( a ) - score( b );
-		} );
-}
-
-async function getBibleBrainSources( version, book ) {
-	if ( ! BIBLE_BRAIN_KEY ) {
-		return [];
-	}
-
-	const language = toIso6393( getVersionLanguage( version, book ) );
-	if ( ! language ) {
-		return [];
-	}
-
-	let bibles;
-	try {
-		const response = await bibleBrainFetch( '/bibles', {
-			language_code: language,
-			media: 'audio',
-			limit: '100',
-		} );
-		bibles = response.data || [];
-	} catch ( error ) {
-		console.warn( error );
-		return [];
-	}
-
-	const versionId = version.toUpperCase();
-	const matchesVersion = ( bibleData ) => {
-		if ( BIBLE_BRAIN_BIBLE_IDS[ version ] ) {
-			return bibleData.abbr === BIBLE_BRAIN_BIBLE_IDS[ version ];
-		}
-		// Bible Brain ids are usually the ISO 639-3 code followed by the version abbreviation, e.g. ENGKJV.
-		return (
-			bibleData.abbr === versionId ||
-			bibleData.abbr === language.toUpperCase() + versionId
-		);
-	};
-
-	return bibles
-		.map( ( bibleData ) => ( {
-			bibleData,
-			exactMatch: matchesVersion( bibleData ),
-			fileset: getAudioFilesets( bibleData, book )[ 0 ],
-		} ) )
-		.filter( ( { fileset } ) => fileset )
-		.sort( ( a, b ) => Number( b.exactMatch ) - Number( a.exactMatch ) )
-		.map( ( { bibleData, exactMatch, fileset } ) => ( {
-			id: `biblebrain:${ fileset.id }`,
-			label: `${ bibleData.vname || bibleData.name } (${
-				bibleData.abbr
-			})`,
-			type: 'file',
-			exactMatch,
-			getChapter: async ( { book: chapterBook, chapter } ) => {
-				const bookCode = USFM_CODES[ getBookIndex( chapterBook ) ];
-				const [ chapterResponse, timestampResponse ] =
-					await Promise.all( [
-						bibleBrainFetch(
-							`/bibles/filesets/${ fileset.id }/${ bookCode }/${ chapter }`
-						),
-						bibleBrainFetch(
-							`/timestamps/${ fileset.id }/${ bookCode }/${ chapter }`
-						).catch( () => null ),
-					] );
-				const url = chapterResponse.data?.[ 0 ]?.path;
-				if ( ! url ) {
-					throw new Error( 'No audio for this chapter' );
-				}
-
-				let timestamps = null;
-				if ( timestampResponse?.data?.length ) {
-					timestamps = {};
-					timestampResponse.data.forEach(
-						( { verse_start: verseStart, timestamp } ) => {
-							timestamps[ parseInt( verseStart ) ] =
-								parseFloat( timestamp );
-						}
-					);
-				}
-
-				return { url, timestamps };
 			},
 		} ) );
 }
@@ -419,7 +257,6 @@ function getSpeechSources( version, book ) {
 			id: 'speech',
 			label: 'Device voice (text to speech)',
 			type: 'speech',
-			exactMatch: true,
 			lang,
 		},
 	];
@@ -431,17 +268,9 @@ export async function getAudioSources( version, book ) {
 		return [];
 	}
 
-	const [ gbtSources, bibleBrainSources ] = await Promise.all( [
-		getGbtSources( version, book ),
-		getBibleBrainSources( version, book ),
-	] );
-
 	return [
 		...getOpenBibleSources( version ),
-		...gbtSources,
-		...bibleBrainSources.filter( ( { exactMatch } ) => exactMatch ),
+		...( await getGbtSources( version, book ) ),
 		...getSpeechSources( version, book ),
-		// Recordings of a different translation in the same language.
-		...bibleBrainSources.filter( ( { exactMatch } ) => ! exactMatch ),
 	];
 }

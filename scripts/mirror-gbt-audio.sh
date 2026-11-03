@@ -17,6 +17,9 @@ BUCKET="${1:?Usage: $0 <bucket> [aws-profile]}"
 PROFILE="${2:-${AWS_PROFILE:-default}}"
 SOURCE="https://assets.globalbibletools.com/audio/v1"
 PREFIX="audio/v1"
+# Recordings we don't have permission to host. PCR (Christophe Rico) is awaiting
+# permission from the Polis Institute; keep this in step with fetch-gbt-audio-timings.js.
+EXCLUDED_RECORDINGS="PCR"
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 
@@ -26,6 +29,12 @@ curl -fsS "$SOURCE/manifest.jsonl" -o "$WORK_DIR/manifest.jsonl"
 grep '"url"' "$WORK_DIR/manifest.jsonl" |
 	sed -E 's/.*"id":"([^"]+)".*/\1/' |
 	while read -r id; do
+		recording="$(echo "$id" | cut -d/ -f2)"
+		if [[ " $EXCLUDED_RECORDINGS " == *" $recording "* ]]; then
+			echo "Skipping $id (no permission to host)"
+			continue
+		fi
+
 		if aws s3api head-object --bucket "$BUCKET" --key "$PREFIX/$id/timings.bin" \
 			--profile "$PROFILE" >/dev/null 2>&1; then
 			echo "Skipping $id (already uploaded)"

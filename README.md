@@ -24,7 +24,7 @@ The primary data points are:
 
 ## Audio
 
-Chapters can be read aloud from any verse. See [docs/audio.md](./docs/audio.md) for the audio sources and how to enable Bible Brain.
+Chapters can be read aloud from any verse. See [docs/audio.md](./docs/audio.md) for the audio sources.
 
 ## Get involed
 

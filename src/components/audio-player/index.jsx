@@ -142,11 +142,6 @@ export default function AudioPlayer() {
 				{ ! error && source?.note && (
 					<div className={ styles.notice }>{ source.note }</div>
 				) }
-				{ ! error && source && ! source.exactMatch && (
-					<div className={ styles.notice }>
-						This is a recording of a different translation.
-					</div>
-				) }
 			</div>
 
 			<div className={ styles.options }>
