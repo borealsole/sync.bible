@@ -9,9 +9,11 @@ import { selectWord } from '../../actions';
 import { createSortFunctions, getSortFunction } from './word-stats-utils';
 import stripPointing from '../../lib/strip-pointing.js';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const WordStatsTable = ( { common, sort, setSort } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const strongsDictionary = useSelector(
 		( state ) => state.data.strongsDictionary
 	);
@@ -102,7 +104,7 @@ const WordStatsTable = ( { common, sort, setSort } ) => {
 								: setSort( 'wordDesc' )
 						}
 					>
-						Word
+						{ t( 'Word' ) }
 						{ sort === 'wordAsc' ? '\u00A0↓' : '' }
 						{ sort === 'wordDesc' ? '\u00A0↑' : '' }
 					</th>
@@ -114,7 +116,7 @@ const WordStatsTable = ( { common, sort, setSort } ) => {
 								: setSort( 'usesDesc' )
 						}
 					>
-						Uses
+						{ t( 'Uses' ) }
 						{ sort === 'usesAsc' ? '\u00A0↓' : '' }
 						{ sort === 'usesDesc' ? '\u00A0↑' : '' }
 					</th>
@@ -126,7 +128,7 @@ const WordStatsTable = ( { common, sort, setSort } ) => {
 								: setSort( 'totalDesc' )
 						}
 					>
-						Total
+						{ t( 'Total' ) }
 						{ sort === 'totalAsc' ? '\u00A0↓' : '' }
 						{ sort === 'totalDesc' ? '\u00A0↑' : '' }
 					</th>
@@ -137,9 +139,9 @@ const WordStatsTable = ( { common, sort, setSort } ) => {
 								? setSort( 'significanceAsc' )
 								: setSort( 'significanceDesc' )
 						}
-						title="Significance (Uses / Total)"
+						title={ t( 'Significance (Uses / Total)' ) }
 					>
-						Sig.
+						{ t( 'Sig.' ) }
 						{ sort === 'significanceAsc' ? '\u00A0↓' : '' }
 						{ sort === 'significanceDesc' ? '\u00A0↑' : '' }
 					</th>

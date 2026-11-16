@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 // Internal
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const SortForm = ( {
 	sortBy,
@@ -15,11 +16,12 @@ const SortForm = ( {
 	filterLabel = 'Show',
 	sortLabel = 'Sort by',
 } ) => {
+	const t = useTranslate();
 	return (
 		<form className={ styles.sortForm }>
 			<fieldset>
 				<div>
-					<label htmlFor={ `sort-${ sortLabel }` }>{ sortLabel }</label>
+					<label htmlFor={ `sort-${ sortLabel }` }>{ t( sortLabel ) }</label>
 					<select
 						value={ sortBy }
 						onChange={ ( e ) => onSortChange( e.target.value ) }
@@ -34,7 +36,9 @@ const SortForm = ( {
 				</div>
 				{ filterOptions && (
 					<div>
-						<label htmlFor={ `filter-${ filterLabel }` }>{ filterLabel }</label>
+						<label htmlFor={ `filter-${ filterLabel }` }>
+							{ t( filterLabel ) }
+						</label>
 						<select
 							value={ filterBy }
 							onChange={ ( e ) => onFilterChange( e.target.value ) }

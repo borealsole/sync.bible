@@ -16,6 +16,7 @@ import MoreDetails from './more-details';
 import WordStats from './word-stats';
 import bible from '../../data/bible.js';
 import { getReferenceFromSearchResult, getVerseData } from '../../lib/reference';
+import { useTranslate } from '../../lib/i18n';
 
 const WordBlockDetails = ( {
 	morphologyProp,
@@ -29,6 +30,7 @@ const WordBlockDetails = ( {
 	word,
 } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const interfaceLanguage = useSelector(
 		( state ) => state.settings.interfaceLanguage
 	);
@@ -129,8 +131,7 @@ const WordBlockDetails = ( {
 		if ( results && results.length > 0 ) {
 			numberOfUses = results.length;
 		}
-		const useString = numberOfUses === 1 ? 'use' : 'uses';
-		const resultString = numberOfUses === 1 ? 'result' : 'results';
+		const isSingular = numberOfUses === 1;
 
 		// Get unique books from all results
 		const booksInResults = resultsFromProps && Array.isArray( resultsFromProps )
@@ -142,7 +143,7 @@ const WordBlockDetails = ( {
 
 		// Build filter options
 		const filterOptions = [
-			{ value: 'all', label: 'All books' },
+			{ value: 'all', label: t( 'All books' ) },
 			...booksInResults.map( ( book ) => ( {
 				value: book,
 				label: bible.getTranslatedBookName( book, version ),
@@ -150,14 +151,19 @@ const WordBlockDetails = ( {
 		];
 
 		const sortOptions = [
-			{ value: 'reference', label: 'Reference' },
-			{ value: 'translation', label: 'Translation' },
+			{ value: 'reference', label: t( 'Reference' ) },
+			{ value: 'translation', label: t( 'Translation' ) },
 		];
 
 		if ( results ) {
 			return (
 				<>
-					Found { numberOfUses } { useString } in { version }:{ ' ' }
+					{ t(
+						isSingular
+							? 'Found {count} use in {version}:'
+							: 'Found {count} uses in {version}:',
+						{ count: numberOfUses, version }
+					) }{ ' ' }
 					<InlineResultsToggle />
 					<SortForm
 						sortBy={ sortBy }
@@ -184,7 +190,12 @@ const WordBlockDetails = ( {
 		if ( loading ) {
 			return (
 				<p>
-					Loading { numberOfUses } search { resultString }...
+					{ t(
+						isSingular
+							? 'Loading {count} search result...'
+							: 'Loading {count} search results...',
+						{ count: numberOfUses }
+					) }
 				</p>
 			);
 		}
@@ -199,15 +210,22 @@ const WordBlockDetails = ( {
 						dispatch( searchForWord( data ) );
 					} }
 				>
-					Find { numberOfUses } { useString }
-					{ numberOfUses > 1000 && ' (slow!)' }
+					{ t( isSingular ? 'Find {count} use' : 'Find {count} uses', {
+						count: numberOfUses,
+					} ) }
+					{ numberOfUses > 1000 && ' ' + t( '(slow!)' ) }
 				</a>
 			);
 		}
 
 		return (
 			<p>
-				Loading { numberOfUses } { useString }...
+				{ t(
+					isSingular
+						? 'Loading {count} use...'
+						: 'Loading {count} uses...',
+					{ count: numberOfUses }
+				) }
 			</p>
 		);
 	}
@@ -237,7 +255,9 @@ const WordBlockDetails = ( {
 				);
 			}
 			return (
-				<p>Stats will appear when you have searched for the word.</p>
+				<p>
+					{ t( 'Stats will appear when you have searched for the word.' ) }
+				</p>
 			);
 		}
 	};

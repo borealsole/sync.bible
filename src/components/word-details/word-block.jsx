@@ -12,10 +12,12 @@ import styles from './styles.module.scss';
 import WordBlockDetails from './word-block-details';
 import { removeFromList, toggleListItemVisible } from '../../actions';
 import { useScrollIntoView } from '../../hooks/use-scroll-into-view';
+import { useTranslate } from '../../lib/i18n';
 
 const WordBlock = ( props ) => {
 	const { data, visible, highlight, setFocus, word } = props;
 	const { clickedWord, morphology, lemma, version } = data;
+	const t = useTranslate();
 	const strongsDictionary = useSelector(
 		( state ) => state.data.strongsDictionary
 	);
@@ -44,15 +46,24 @@ const WordBlock = ( props ) => {
 
 	const termTitle = ( { clusivity, version, lemma, range, clickedWord } ) => {
 		return (
-			'strongs number: ' +
+			t( 'strongs number' ) +
+			': ' +
 			lemma +
-			'\nversion: ' +
+			'\n' +
+			t( 'version' ) +
+			': ' +
 			version +
-			'\nclusivity: ' +
+			'\n' +
+			t( 'clusivity' ) +
+			': ' +
 			clusivity +
-			'\nrange: ' +
+			'\n' +
+			t( 'range' ) +
+			': ' +
 			range +
-			'\nclicked word: ' +
+			'\n' +
+			t( 'clicked word' ) +
+			': ' +
 			clickedWord
 		);
 	};

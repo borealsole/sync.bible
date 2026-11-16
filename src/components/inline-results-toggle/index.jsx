@@ -6,10 +6,12 @@ import { settingsChange } from '../../actions';
 import UnfoldLess from '../svg/unfold-less';
 import UnfoldMore from '../svg/unfold-more';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 /** Toggle component for expanding/collapsing inline search results */
 export default function InlineResultsToggle() {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const expandedSearchResults = useSelector(
 		( state ) => state.settings.expandedSearchResults
 	);
@@ -27,7 +29,7 @@ export default function InlineResultsToggle() {
 			<a
 				className={ styles.foundInExtra }
 				onClick={ collapseSearchResults }
-				title="Hide reference context"
+				title={ t( 'Hide reference context' ) }
 			>
 				<UnfoldLess />
 			</a>
@@ -38,7 +40,7 @@ export default function InlineResultsToggle() {
 		<a
 			className={ styles.foundInExtra }
 			onClick={ expandSearchResults }
-			title="Show reference context"
+			title={ t( 'Show reference context' ) }
 		>
 			<UnfoldMore />
 		</a>

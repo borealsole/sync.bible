@@ -7,19 +7,27 @@ import CombinedResults from '../word-details/combined';
 import SharedWords from '../shared-words';
 import Single from './single';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 export default function BookMarks() {
 	const list = useSelector( ( state ) => state.list );
+	const t = useTranslate();
 
 	const bookmarks = list.filter(
 		( { listType } ) => listType === 'bookmark'
 	);
 
+	const [ bookmarkHelpBefore, bookmarkHelpAfter = '' ] = t(
+		'Click the {icon} to bookmark a verse.'
+	).split( '{icon}' );
+
 	return (
 		<>
 			{ bookmarks.length === 0 && (
 				<p className={ styles.description }>
-					Click the <Bookmark /> to bookmark a verse.
+					{ bookmarkHelpBefore }
+					<Bookmark />
+					{ bookmarkHelpAfter }
 				</p>
 			) }
 			<div className={ styles.bookmarksContainer }>

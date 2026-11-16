@@ -19,6 +19,7 @@ import {
 import PickerSvg from '../svg/picker';
 import VersionSelect from '../version-select';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const isSimpleLemmaSearch = ( { lemma, word, morph, clusivity, range } ) => {
 	return (
@@ -49,6 +50,7 @@ const SearchForm = ( { isActive } ) => {
 
 	const dispatch = useDispatch();
 	javascripture.reactHelpers.dispatch = dispatch;
+	const t = useTranslate();
 
 	const submit = ( event ) => {
 		event.preventDefault();
@@ -69,10 +71,10 @@ const SearchForm = ( { isActive } ) => {
 
 	const searchButtonText = () => {
 		if ( isSubmitButtonDisabled ) {
-			return 'Loading ' + searchForm.version + '...';
+			return t( 'Loading {version}...', { version: searchForm.version } );
 		}
 
-		return 'Search';
+		return t( 'Search' );
 	};
 	const showAdvanced = () => {
 		if ( searchAdvanced ) {
@@ -108,7 +110,7 @@ const SearchForm = ( { isActive } ) => {
 				className={ styles.pickerButton }
 				type="button"
 				onClick={ () => dispatch( activateSearchSelect( mode ) ) }
-				title="Use this to select the term you want to search for."
+				title={ t( 'Use this to select the term you want to search for.' ) }
 			>
 				<PickerSvg />
 			</button>
@@ -137,13 +139,13 @@ const SearchForm = ( { isActive } ) => {
 			<form onSubmit={ submit }>
 				<fieldset>
 					<label htmlFor="word" className="has-placeholder">
-						Word
+						{ t( 'Word' ) }
 					</label>
 					<input
 						className={ styles.hasPicker }
 						type="text"
 						name="word"
-						placeholder="Word"
+						placeholder={ t( 'Word' ) }
 						onChange={ change }
 						value={ searchForm.word }
 						ref={ ( button ) => {
@@ -161,13 +163,13 @@ const SearchForm = ( { isActive } ) => {
 					>
 						<fieldset>
 							<label htmlFor="lemma" className="has-placeholder">
-								Strongs number
+								{ t( 'Strongs number' ) }
 							</label>
 							<input
 								className={ styles.hasPicker }
 								type="text"
 								name="lemma"
-								placeholder="Strongs number"
+								placeholder={ t( 'Strongs number' ) }
 								onChange={ change }
 								value={ searchForm.lemma }
 							/>
@@ -175,20 +177,20 @@ const SearchForm = ( { isActive } ) => {
 						</fieldset>
 						<fieldset>
 							<label htmlFor="morph" className="has-placeholder">
-								Morphology
+								{ t( 'Morphology' ) }
 							</label>
 							<input
 								className={ styles.hasPicker }
 								type="text"
 								name="morph"
-								placeholder="Morphology"
+								placeholder={ t( 'Morphology' ) }
 								onChange={ change }
 								value={ searchForm.morph }
 							/>
 							{ pickerButton( 'morph' ) }
 						</fieldset>
 						<fieldset>
-							<label htmlFor="version">Version: </label>
+							<label htmlFor="version">{ t( 'Version:' ) } </label>
 							<VersionSelect
 								name="version"
 								onChange={ selectChange }
@@ -196,28 +198,28 @@ const SearchForm = ( { isActive } ) => {
 							/>
 						</fieldset>
 						<fieldset className={ styles.clusivity }>
-							<label htmlFor="clusivity">Find</label>{ ' ' }
+							<label htmlFor="clusivity">{ t( 'Find' ) }</label>{ ' ' }
 							<select
 								name="clusivity"
 								onChange={ change }
 								value={ searchForm.clusivity }
 							>
-								<option value="exclusive">all</option>
-								<option value="inclusive">any</option>
+								<option value="exclusive">{ t( 'all' ) }</option>
+								<option value="inclusive">{ t( 'any' ) }</option>
 							</select>{ ' ' }
-							<label htmlFor="range">terms in a</label>{ ' ' }
+							<label htmlFor="range">{ t( 'terms in a' ) }</label>{ ' ' }
 							<select
 								name="range"
 								onChange={ change }
 								value={ searchForm.range }
 							>
-								<option>word</option>
-								<option>verse</option>
-								<option>chapter</option>
+								<option value="word">{ t( 'word' ) }</option>
+								<option value="verse">{ t( 'verse' ) }</option>
+								<option value="chapter">{ t( 'chapter' ) }</option>
 							</select>
 						</fieldset>
 						<fieldset>
-							<label>Match whole word?</label>{ ' ' }
+							<label>{ t( 'Match whole word?' ) }</label>{ ' ' }
 							<input
 								type="checkbox"
 								name="strict"
@@ -228,9 +230,9 @@ const SearchForm = ( { isActive } ) => {
 					</motion.div>
 				) }
 				<fieldset className={ styles.advanced }>
-					<input type="reset" value="Reset" onClick={ reset } />
+					<input type="reset" value={ t( 'Reset' ) } onClick={ reset } />
 					<a onClick={ showAdvanced }>
-						{ searchAdvanced ? 'Hide advanced' : 'Show advanced' }
+						{ searchAdvanced ? t( 'Hide advanced' ) : t( 'Show advanced' ) }
 					</a>
 				</fieldset>
 				<fieldset>

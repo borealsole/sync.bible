@@ -12,6 +12,7 @@ import bible from '../../data/bible.js';
 
 // Internal
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const getBookFromState = ( reference, scrollChapter ) => {
 	if ( scrollChapter && scrollChapter.book ) {
@@ -41,6 +42,7 @@ const getReferenceValue = ( reference, scrollChapter, version ) => {
 
 const ReferenceInput = ( { index } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const reference = useSelector( ( state ) => state.reference );
 	const scrollChapter = useSelector( ( state ) => {
 		if ( state.scrollChapter ) {
@@ -91,7 +93,7 @@ const ReferenceInput = ( { index } ) => {
 					type="text"
 					id="goToReference"
 					name="reference"
-					placeholder="Type a reference"
+					placeholder={ t( 'Type a reference' ) }
 					className={ styles.input }
 					value={ localReference }
 					onChange={ change }

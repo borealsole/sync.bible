@@ -13,9 +13,11 @@ import {
 } from '../../actions';
 import Menu from '../svg/menu';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const Controls = () => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const inSync = useSelector( ( state ) => state.settings.inSync );
 	const referenceLength = useSelector( ( state ) => state.reference.length );
 	const isSingle = useSelector(
@@ -64,20 +66,20 @@ const Controls = () => {
 				<option value="" disabled hidden>
 					…
 				</option>
-				{ ! isSingle && <option value="add">Add a column</option> }
+				{ ! isSingle && <option value="add">{ t( 'Add a column' ) }</option> }
 				{ referenceLength > 1 && (
-					<option value="delete">Delete column</option>
+					<option value="delete">{ t( 'Delete column' ) }</option>
 				) }
 				{ referenceLength > 1 && inSync !== true && (
-					<option value="sync">Sync references</option>
+					<option value="sync">{ t( 'Sync references' ) }</option>
 				) }
 				{ referenceLength > 1 && inSync !== false && (
-					<option value="unsync">Un-sync references</option>
+					<option value="unsync">{ t( 'Un-sync references' ) }</option>
 				) }
 				{ ( isSingle || inSync !== 'harmonised' ) && (
-					<option value="harmonised">Harmonise</option>
+					<option value="harmonised">{ t( 'Harmonise' ) }</option>
 				) }
-				{ ! isSingle && <option value="single">Single verse</option> }
+				{ ! isSingle && <option value="single">{ t( 'Single verse' ) }</option> }
 			</select>
 		</div>
 	);

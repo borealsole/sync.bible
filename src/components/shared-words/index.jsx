@@ -14,6 +14,7 @@ import WordStatsTable from '../word-stats-table';
 import LimitControl from '../limit-control';
 import { useScrollIntoView } from '../../hooks/use-scroll-into-view';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 function SharedWords( { type } ) {
 	const [ limit, setLimit ] = useState( 100 );
@@ -23,6 +24,7 @@ function SharedWords( { type } ) {
 	const list = useSelector( ( state ) => state.list );
 	const listOfReferences = getListOfReferencesFromType( list, type );
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const data = useSelector( ( state ) => state.data );
 
 	// Scroll into view when this panel is opened
@@ -63,9 +65,9 @@ function SharedWords( { type } ) {
 			onToggle={ () => {
 				setOpen( ! open );
 			} }
-			header={ 'Shared words' }
+			header={ t( 'Shared words' ) }
 		>
-			<div>Words that are used in more than one reference</div>
+			<div>{ t( 'Words that are used in more than one reference' ) }</div>
 			<LimitControl limit={ limit } onChange={ setLimit } />
 			{ Object.keys( filteredSharedWords ).length > 0 ? (
 				<div className={ styles.tableWrapper }>
@@ -76,7 +78,7 @@ function SharedWords( { type } ) {
 					/>
 				</div>
 			) : (
-				<p>No shared words found.</p>
+				<p>{ t( 'No shared words found.' ) }</p>
 			) }
 		</Collapsible>
 	) : null;

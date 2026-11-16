@@ -8,9 +8,11 @@ import Close from '../svg/close';
 import Clear from '../clear';
 import UnfoldLessDouble from '../svg/unfold-less-double';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const TrayHeaderButtons = ( { trayId, trayText, hasListItems, hasOpenItems } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 
 	const closeAllForTray = () => {
 		dispatch( closeAllListItems( trayId ) );
@@ -28,7 +30,7 @@ const TrayHeaderButtons = ( { trayId, trayText, hasListItems, hasOpenItems } ) =
 						<button
 							className={ styles.trayHeaderButton }
 							onClick={ closeAllForTray }
-							title="Close all"
+							title={ t( 'Close all' ) }
 						>
 							<UnfoldLessDouble />
 						</button>
@@ -42,7 +44,7 @@ const TrayHeaderButtons = ( { trayId, trayText, hasListItems, hasOpenItems } ) =
 			<button
 				className={ styles.trayHeaderButton }
 				onClick={ closeTray }
-				title={ `Close ${ trayText }` }
+				title={ t( 'Close {name}', { name: trayText } ) }
 			>
 				<Close />
 			</button>

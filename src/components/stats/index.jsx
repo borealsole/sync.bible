@@ -21,9 +21,14 @@ import WordStatsTable from '../word-stats-table';
 import LimitControl from '../limit-control';
 
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const Rare = () => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
+	const interfaceLanguage = useSelector(
+		( state ) => state.settings.interfaceLanguage
+	);
 	const [ sort, setSort ] = useState( 'usesDesc' );
 	const [ limit, setLimit ] = useState( 100 );
 	const isOriginalLoaded = useSelector(
@@ -59,7 +64,7 @@ const Rare = () => {
 			} );
 			versesJSX.unshift(
 				<option key="all" value="all">
-					All
+					{ t( 'All' ) }
 				</option>
 			);
 			return versesJSX;
@@ -97,7 +102,7 @@ const Rare = () => {
 	if ( ! isOriginalLoaded ) {
 		return (
 			<div className={ styles.trayPadding }>
-				<p>Loading original texts...</p>
+				<p>{ t( 'Loading original texts...' ) }</p>
 			</div>
 		);
 	}
@@ -111,7 +116,7 @@ const Rare = () => {
 					onChange={ compareBookChange }
 					value={ reference ? reference.book : '' }
 				>
-					{ getBooks() }
+					{ getBooks( interfaceLanguage, t ) }
 				</select>
 				<select
 					className={ styles.compareWithChapter }
@@ -119,7 +124,7 @@ const Rare = () => {
 					onChange={ compareChapterChange }
 					value={ reference ? reference.chapter : '' }
 				>
-					{ getCompareChapters( reference ) }
+					{ getCompareChapters( reference, t ) }
 				</select>
 				<select
 					className={ styles.compareWithVerses }

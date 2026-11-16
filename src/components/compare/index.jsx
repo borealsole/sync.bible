@@ -21,11 +21,16 @@ import bible from '../../data/bible.js';
 import Connections from './connections';
 import WordStatsTable from '../word-stats-table';
 import LimitControl from '../limit-control';
+import { useTranslate } from '../../lib/i18n';
 
 export default function Compare() {
 	const [ compareAllChapters, setCompareAllChapters ] = useState( false );
 	const [ sortBy, setSortBy ] = useState( 'significanceDesc' );
 	const dispatch = useDispatch();
+	const t = useTranslate();
+	const interfaceLanguage = useSelector(
+		( state ) => state.settings.interfaceLanguage
+	);
 	const isOriginalLoaded = useSelector(
 		( state ) => 'undefined' !== typeof state.data.original
 	);
@@ -80,16 +85,18 @@ export default function Compare() {
 
 	const getOverlap = () => {
 		if ( ! overlap ) {
-			return 'Loading...';
+			return t( 'Loading...' );
 		}
 
 		if ( overlap.length === 0 ) {
-			return 'No connections found';
+			return t( 'No connections found' );
 		}
 
 		return (
 			<div>
-				<h3>Connections ({ overlap.length }):</h3>
+				<h3>
+					{ t( 'Connections ({count}):', { count: overlap.length } ) }
+				</h3>
 				<div className={ styles.tableWrapper }>
 					<WordStatsTable
 						common={ overlapWithCounts }
@@ -144,7 +151,7 @@ export default function Compare() {
 			} );
 			versesJSX.unshift(
 				<option key="all" value="all">
-					All
+					{ t( 'All' ) }
 				</option>
 			);
 			return versesJSX;
@@ -182,7 +189,7 @@ export default function Compare() {
 	if ( ! isOriginalLoaded ) {
 		return (
 			<div className={ styles.compare }>
-				<p>Loading original texts...</p>
+				<p>{ t( 'Loading original texts...' ) }</p>
 			</div>
 		);
 	}
@@ -227,14 +234,14 @@ export default function Compare() {
 						onChange={ compareBookChange }
 						value={ reference ? reference.book : '' }
 					>
-						{ getBooks() }
+						{ getBooks( interfaceLanguage, t ) }
 					</select>
 					<select
 						name="compareWithChapter"
 						onChange={ compareChapterChange }
 						value={ reference ? reference.chapter : '' }
 					>
-						{ getCompareChapters( reference ) }
+						{ getCompareChapters( reference, t ) }
 					</select>
 					<select
 						name="compareWithVerses"
@@ -245,7 +252,7 @@ export default function Compare() {
 					</select>
 				</div>
 			</div>
-			<h3 className={ styles.h3 }>compare with</h3>
+			<h3 className={ styles.h3 }>{ t( 'compare with' ) }</h3>
 			<div className={ styles.statsReferenceWrapper }>
 				<div className={ styles.statsReference }>
 					<select
@@ -258,7 +265,7 @@ export default function Compare() {
 								: ''
 						}
 					>
-						{ getBooks() }
+						{ getBooks( interfaceLanguage, t ) }
 					</select>
 					<select
 						name="chapter"
@@ -269,7 +276,7 @@ export default function Compare() {
 								: ''
 						}
 					>
-						{ getCompareChapters( referenceToCompareWith ) }
+						{ getCompareChapters( referenceToCompareWith, t ) }
 					</select>
 					<select
 						name="verses"
@@ -297,7 +304,7 @@ export default function Compare() {
 						className={ styles.selectAllButton }
 						onClick={ addAllWords }
 					>
-						Select all words
+						{ t( 'Select all words' ) }
 					</button>
 				) }
 			</div>
@@ -308,7 +315,7 @@ export default function Compare() {
 					setCompareAllChapters( true );
 				} }
 			>
-				Compare all chapters
+				{ t( 'Compare all chapters' ) }
 			</a>
 		</div>
 	);

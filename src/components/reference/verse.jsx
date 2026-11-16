@@ -8,9 +8,11 @@ import { mapVersionToData } from '../../lib/reference';
 import { selectVerseComponentData } from '../../selectors';
 import Word from './word';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const Verse = ( { reference, version } ) => {
 	const { book, chapter, verse } = reference;
+	const t = useTranslate();
 
 	// Single selector instead of 4 separate subscriptions - improves performance
 	const { data, lcData, farsiTranslations, strongsObjectWithFamilies } =
@@ -40,7 +42,7 @@ const Verse = ( { reference, version } ) => {
 	const notAvailable = ( key ) => {
 		return (
 			<div className={ styles.verseWrapper } key={ key }>
-				Book not available
+				{ t( 'Book not available' ) }
 			</div>
 		);
 	};

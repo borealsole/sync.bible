@@ -16,9 +16,11 @@ import {
 	TRAY_Z_INDEX_BASE,
 	TRAY_Z_INDEX_INACTIVE,
 } from '../../constants/dimensions';
+import { useTranslate } from '../../lib/i18n';
 
 const TrayList = ( { trays, sidebarWidth } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const activeTrays = useSelector( ( state ) => state.trays );
 	const interfaceLanguage = useSelector(
 		( state ) => state.settings.interfaceLanguage
@@ -102,7 +104,9 @@ const TrayList = ( { trays, sidebarWidth } ) => {
 				} }
 			>
 				<div className={ styles.trayHeader }>
-					<h3 className={ styles.trayTitle }>{ tray.text }</h3>
+					<h3 className={ styles.trayTitle }>
+						{ t( tray.text ) }
+					</h3>
 					<div className={ styles.trayHeaderRight }>
 						{ [
 							'word',
@@ -117,7 +121,7 @@ const TrayList = ( { trays, sidebarWidth } ) => {
 										type="button"
 										tabIndex={ -1 }
 										aria-hidden="true"
-										title="Select language"
+										title={ t( 'Select language' ) }
 									>
 										<LibraryBooksSvg />
 									</button>
@@ -125,13 +129,13 @@ const TrayList = ( { trays, sidebarWidth } ) => {
 										value={ interfaceLanguage }
 										name="interfaceLanguage"
 										onChange={ changeInterfaceLanguage }
-										ariaLabel="Select language"
+										ariaLabel={ t( 'Select language' ) }
 									/>
 								</div>
 							) }
 						<TrayHeaderButtons
 							trayId={ tray.id }
-							trayText={ tray.text }
+							trayText={ t( tray.text ) }
 							hasListItems={ hasListItems }
 							hasOpenItems={ hasOpenItemsForTray( tray.id ) }
 						/>

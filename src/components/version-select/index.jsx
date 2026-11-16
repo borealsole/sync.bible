@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bible from '../../data/bible.js';
 import styles from './styles.module.scss';
 import { settingsChange, setTrayVisibilityFilter, removeColumn } from '../../actions/';
+import { useTranslate } from '../../lib/i18n';
 
 /** Component for selecting Bible versions with language grouping */
 export default function VersionSelect( {
@@ -17,6 +18,7 @@ export default function VersionSelect( {
 	ariaLabel,
 } ) {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const { availableVersions, interfaceLanguage, referenceCount } = useSelector( ( state ) => {
 		return {
 			availableVersions: state.settings.versions,
@@ -60,7 +62,7 @@ export default function VersionSelect( {
 			} }
 		>
 			<option disabled hidden value="default">
-				Select a version to get started
+				{ t( 'Select a version to get started' ) }
 			</option>
 			{ Object.keys( bible.Data.tongues ).map( ( key ) => {
 				const versionsForLanguage = Object.keys(
@@ -103,9 +105,11 @@ export default function VersionSelect( {
 					)
 				);
 			} ) }
-			<option value="more">Select more versions</option>
+			<option value="more">{ t( 'Select more versions' ) }</option>
 			{ referenceCount > 1 && (
-				<option value="delete-column">Delete this column</option>
+				<option value="delete-column">
+					{ t( 'Delete this column' ) }
+				</option>
 			) }
 		</select>
 	);

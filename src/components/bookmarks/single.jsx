@@ -17,9 +17,11 @@ import { calculateCommonWords } from '../../lib/reference';
 import { useScrollIntoView } from '../../hooks/use-scroll-into-view';
 import searchStyles from '../search/styles.module.scss';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 export default function Single( { bookmark, index } ) {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const data = useSelector( ( state ) => state.data );
 	const interfaceLanguage = useSelector(
 		( state ) => state.settings.interfaceLanguage
@@ -50,13 +52,13 @@ export default function Single( { bookmark, index } ) {
 
 	const renderCrossReferences = () => {
 		if ( ! data.crossReferences ) {
-			return 'Loading cross references';
+			return t( 'Loading cross references' );
 		}
 		return (
 			<div>
 				{ bookmark.results.length > 0
-					? 'Cross references:'
-					: 'No cross references' }
+					? t( 'Cross references:' )
+					: t( 'No cross references' ) }
 				<InlineResultsToggle />
 				<div
 					dir={
@@ -91,11 +93,11 @@ export default function Single( { bookmark, index } ) {
 
 	const renderStats = () => {
 		if ( ! data.original ) {
-			return <p>Loading original texts...</p>;
+			return <p>{ t( 'Loading original texts...' ) }</p>;
 		}
 
 		if ( ! common || Object.keys( common ).length === 0 ) {
-			return <p>No words found in this verse.</p>;
+			return <p>{ t( 'No words found in this verse.' ) }</p>;
 		}
 
 		return (

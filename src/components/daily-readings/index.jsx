@@ -5,19 +5,24 @@ import { useState, Fragment } from 'react';
 import DailyReadingLink from './daily-reading-link';
 import styles from './styles.module.scss';
 import dailyReadings from '../../data/cdrplan.min.js';
+import { useLocale } from '../../lib/i18n';
 
-const getMonthName = ( monthNumber ) => {
+const getMonthName = ( monthNumber, locale ) => {
 	const month = new Date( 1970, monthNumber, 1 );
-	return month.toLocaleString( 'default', { month: 'long' } );
+	try {
+		return month.toLocaleString( locale, { month: 'long' } );
+	} catch {
+		return month.toLocaleString( 'default', { month: 'long' } );
+	}
 };
 
-const getMonths = () => {
+const getMonths = ( locale ) => {
 	let monthNumber = 0;
 	const months = [];
 	while ( monthNumber < 12 ) {
 		months[ monthNumber ] = (
 			<option key={ monthNumber } value={ monthNumber }>
-				{ getMonthName( monthNumber ) }
+				{ getMonthName( monthNumber, locale ) }
 			</option>
 		);
 		monthNumber++;
@@ -41,6 +46,7 @@ function getDaysIntoYear( date ) {
 }
 
 export default function DailyReadings() {
+	const locale = useLocale();
 	const [ selectedMonth, setSelectedMonth ] = useState(
 		new Date().getMonth()
 	);
@@ -93,7 +99,7 @@ export default function DailyReadings() {
 					setSelectedMonth( event.target.value );
 				} }
 			>
-				{ getMonths() }
+				{ getMonths( locale ) }
 			</select>
 			<select
 				className={ styles.day }

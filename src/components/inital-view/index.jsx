@@ -4,8 +4,10 @@ import { useSelector } from 'react-redux';
 // Internal
 import styles from './styles.module.scss';
 import Versions from '../versions';
+import { useTranslate } from '../../lib/i18n';
 
 export default function InitialView() {
+	const t = useTranslate();
 	const reference = useSelector( ( state ) => state.reference );
 
 	if ( reference.length ) {
@@ -25,19 +27,21 @@ export default function InitialView() {
 				</div>
 				<h1>sync.bible</h1>
 				<p>
-					sync.bible is a tool to help you understand the bible
-					better.
+					{ t(
+						'sync.bible is a tool to help you understand the bible better.'
+					) }
 				</p>
 				{ localStorage && (
 					<p className="installation-info">
-						Once the scripts have loaded, they will be cached, so
-						the app will work offline.
+						{ t(
+							'Once the scripts have loaded, they will be cached, so the app will work offline.'
+						) }
 					</p>
 				) }
 				<p>
-					Having problems?{ ' ' }
+					{ t( 'Having problems?' ) }{ ' ' }
 					<a href="http://scruffian.wordpress.com/contact/">
-						Email me
+						{ t( 'Email me' ) }
 					</a>
 					,{ ' ' }
 					<a
@@ -48,13 +52,15 @@ export default function InitialView() {
 							window.location.reload();
 						} }
 					>
-						clear settings and start over
+						{ t( 'clear settings and start over' ) }
 					</a>{ ' ' }
-					or <a href="/help/index.html">get help</a>
+					{ t( 'or' ) }{ ' ' }
+					<a href="/help/index.html">{ t( 'get help' ) }</a>
 				</p>
 				<p>
-					There are also old versions available in case this one is
-					broken:{ ' ' }
+					{ t(
+						'There are also old versions available in case this one is broken:'
+					) }{ ' ' }
 					<a href="https://javascripture.github.io/javascripture">
 						javascripture
 					</a>

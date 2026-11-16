@@ -6,8 +6,10 @@ import { PURGE } from 'redux-persist';
 // Internal
 import Download from '../svg/download';
 import styles from './styles.module.scss';
+import { useTranslate } from '../../lib/i18n';
 
 const HelpTray = () => {
+	const t = useTranslate();
 	const dispatch = useDispatch();
 	const data = useSelector( ( state ) => state.data );
 	const [ cacheStatus, setCacheStatus ] = useState( {
@@ -122,12 +124,14 @@ const HelpTray = () => {
 			} catch ( error ) {
 				console.error( 'Error clearing cache:', error );
 				alert(
-					'Error clearing cache. Please try again or clear your browser cache manually.'
+					t(
+						'Error clearing cache. Please try again or clear your browser cache manually.'
+					)
 				);
 			}
 		} else {
 			alert(
-				'Service worker or cache API not supported in this browser.'
+				t( 'Service worker or cache API not supported in this browser.' )
 			);
 		}
 	};
@@ -152,25 +156,28 @@ const HelpTray = () => {
 				<div className="content">
 					<div className="content-padding">
 						<p>
-							<a href="/help/index.html">Watch help videos.</a>
+							<a href="/help/index.html">
+								{ t( 'Watch help videos.' ) }
+							</a>
 						</p>
-						<h3>Keyboard shortcuts</h3>
+						<h3>{ t( 'Keyboard shortcuts' ) }</h3>
 						<ul>
 							<li>
-								<strong>Go to a reference:</strong> just start
-								typing
+								<strong>{ t( 'Go to a reference:' ) }</strong>{ ' ' }
+								{ t( 'just start typing' ) }
 							</li>
 							<li>
-								<strong>Jump to chapter</strong>: type a number
+								<strong>{ t( 'Jump to chapter:' ) }</strong>{ ' ' }
+								{ t( 'type a number' ) }
 							</li>
 						</ul>
 						<p>
-							Versions with a * are indexed with Strong&apos;s numbers.
+							{ t( "Versions with a * are indexed with Strong's numbers." ) }
 						</p>
 					</div>
 				</div>
 
-				<h3>Legacy versions</h3>
+				<h3>{ t( 'Legacy versions' ) }</h3>
 				<p>
 					<a href="https://javascripture.github.io/javascripture">
 						javascripture.org
@@ -181,23 +188,25 @@ const HelpTray = () => {
 					</a>
 				</p>
 
-				<h3>Texts</h3>
+				<h3>{ t( 'Texts' ) }</h3>
 				<p>
-					Original:
+					{ t( 'Original:' ) }
 					<br />
 					<a href="https://github.com/openscriptures/morphhb">
-						Hebrew
+						{ t( 'Hebrew' ) }
 					</a>{ ' ' }
 					|{ ' ' }
-					<a href="https://github.com/morphgnt/tischendorf">Greek</a>
+					<a href="https://github.com/morphgnt/tischendorf">
+						{ t( 'Greek' ) }
+					</a>
 				</p>
 				<p className={ styles.inline }>
 					<a href="https://github.com/syncbible/sync.bible/blob/main/public/bibles/LC.json">
-						Literal consistent
+						{ t( 'Literal consistent' ) }
 					</a>{ ' ' }
 					<a
 						className={ styles.export }
-						title="Export"
+						title={ t( 'Export' ) }
 						onClick={ () => exportFile( 'LC' ) }
 					>
 						<Download />
@@ -209,7 +218,7 @@ const HelpTray = () => {
 					</a>{ ' ' }
 					<a
 						className={ styles.export }
-						title="Export"
+						title={ t( 'Export' ) }
 						onClick={ () => exportFile( 'NMV_strongs' ) }
 					>
 						<Download />
@@ -222,70 +231,72 @@ const HelpTray = () => {
 				</p>
 				<p>
 					<a href="https://www.dropbox.com/s/7e05iklpkrtn46n/Genesis%20-%20Jeremiah.pdf?dl=0">
-						Mark&apos;s Hebrew Literal
+						{ t( "Mark's Hebrew Literal" ) }
 					</a>
 					.<br />{ ' ' }
 					<a href="https://www.dropbox.com/s/lrhzis4d9532gf4/Introduction.pdf?dl=0">
-						Please read the introduction
+						{ t( 'Please read the introduction' ) }
 					</a>
 					.
 				</p>
-				<h3>Offline Status</h3>
+				<h3>{ t( 'Offline Status' ) }</h3>
 				{ cacheStatus.loading ? (
-					<p>Checking cache status...</p>
+					<p>{ t( 'Checking cache status...' ) }</p>
 				) : (
 					<div>
 						<p>
-							<strong>Service Worker:</strong>{ ' ' }
+							<strong>{ t( 'Service Worker:' ) }</strong>{ ' ' }
 							{ cacheStatus.serviceWorkerActive ? (
 								<span style={ { color: 'green' } }>
-									✓ Active
+									✓ { t( 'Active' ) }
 								</span>
 							) : (
 								<span style={ { color: 'red' } }>
-									✗ Not Active
+									✗ { t( 'Not Active' ) }
 								</span>
 							) }
 						</p>
 						<p>
-							<strong>Cached Files:</strong>{ ' ' }
+							<strong>{ t( 'Cached Files:' ) }</strong>{ ' ' }
 							{ cacheStatus.totalCachedFiles }
 						</p>
 						{ cacheStatus.caches.length > 0 && (
 							<div>
-								<strong>Caches:</strong>
+								<strong>{ t( 'Caches:' ) }</strong>
 								<ul>
 									{ cacheStatus.caches.map( ( cache ) => (
 										<li key={ cache.name }>
-											{ cache.name }: { cache.fileCount }{ ' ' }
-											files
+											{ cache.name }:{ ' ' }
+											{ t( '{count} files', {
+												count: cache.fileCount,
+											} ) }
 										</li>
 									) ) }
 								</ul>
 							</div>
 						) }
 						<p>
-							<strong>Offline Ready:</strong>{ ' ' }
+							<strong>{ t( 'Offline Ready:' ) }</strong>{ ' ' }
 							{ cacheStatus.serviceWorkerActive &&
 							cacheStatus.totalCachedFiles > 0 ? (
-								<span style={ { color: 'green' } }>✓ Yes</span>
+								<span style={ { color: 'green' } }>✓ { t( 'Yes' ) }</span>
 							) : (
-								<span style={ { color: 'red' } }>✗ No</span>
+								<span style={ { color: 'red' } }>✗ { t( 'No' ) }</span>
 							) }
 						</p>
 					</div>
 				) }
 				<p>
 					<a href="#" onClick={ clearCache }>
-						Clear cache and reload
+						{ t( 'Clear cache and reload' ) }
 					</a>
 				</p>
 				<br />
 				<br />
 				<p>
-					Built in Firefox.
+					{ t( 'Built in Firefox.' ) }
 					<br />
-					Tested in Chrome.
+					{ t( 'Tested in Chrome.' ) }
 				</p>
 			</div>
 		</div>

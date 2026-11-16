@@ -10,8 +10,10 @@ import morphology from '../../lib/morphology';
 import stripPointing from '../../lib/strip-pointing.js';
 import { getFamily } from '../../lib/word';
 import WordBlockLink from './word-block-link';
+import { useTranslate } from '../../lib/i18n';
 
 const MoreDetails = ( { morphologyProp, strongsNumber, version } ) => {
+	const t = useTranslate();
 	const strongsDictionary = useSelector(
 		( state ) => state.data.strongsDictionary
 	);
@@ -48,7 +50,7 @@ const MoreDetails = ( { morphologyProp, strongsNumber, version } ) => {
 			return branchesData;
 		}
 
-		return 'None';
+		return t( 'None' );
 	};
 
 	const getRoots = () => {
@@ -69,7 +71,7 @@ const MoreDetails = ( { morphologyProp, strongsNumber, version } ) => {
 			} );
 		}
 
-		return 'None';
+		return t( 'None' );
 	};
 
 	const getMorphology = () => {
@@ -118,30 +120,30 @@ const MoreDetails = ( { morphologyProp, strongsNumber, version } ) => {
 				: null }
 			<br />
 			<div>
-				<strong>Roots: </strong>
+				<strong>{ t( 'Roots:' ) } </strong>
 				{ getRoots() }
 			</div>
 			<div>
-				<strong>Branches: </strong>
+				<strong>{ t( 'Branches:' ) } </strong>
 				{ getBranches() }
 			</div>
 			<div>
-				<strong>Family: </strong>
+				<strong>{ t( 'Family:' ) } </strong>
 				{ getFamily( strongsNumber, strongsWithFamilies ) }
 			</div>
 			<br />
 			<div>
-				<strong>Morphology</strong>
+				<strong>{ t( 'Morphology' ) }</strong>
 				<br />
 				{ morphologyProp } - { morphologyProp && getMorphology() }
 				<br />
 				<br />
-				<strong>KJV translations</strong>
+				<strong>{ t( 'KJV translations' ) }</strong>
 				<br />
 				{ getKJVDefinitions( strongsNumber ) }
 				<br />
 				<br />
-				<strong>Strong&apos;s Derivation</strong>
+				<strong>{ t( "Strong's Derivation" ) }</strong>
 				<br />
 				{ wordDetail && wordDetail.derivation }
 				<br />

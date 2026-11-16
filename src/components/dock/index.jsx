@@ -9,9 +9,11 @@ import { DOCK_HEIGHT } from '../../constants/dimensions';
 import { useTrayDimensions } from '../../hooks/useTrayDimensions';
 import { swapColumns } from '../../actions';
 import CompareArrows from '../svg/compare-arrows';
+import { useTranslate } from '../../lib/i18n';
 
 const Dock = () => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const versionArray = useSelector(
 		( state ) =>
 			state.reference.map(
@@ -51,7 +53,10 @@ const Dock = () => {
 							<button
 								className={ styles.swapButton }
 								onClick={ () => handleSwap( index, index + 1 ) }
-								title={ `Swap columns ${ index + 1 } and ${ index + 2 }` }
+								title={ t( 'Swap columns {a} and {b}', {
+									a: index + 1,
+									b: index + 2,
+								} ) }
 							>
 								<CompareArrows />
 							</button>

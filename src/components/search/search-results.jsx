@@ -12,6 +12,7 @@ import Stats from '../svg/stats';
 import styles from './styles.module.scss';
 import { removeFromList, toggleListItemVisible } from '../../actions';
 import { useScrollIntoView } from '../../hooks/use-scroll-into-view';
+import { useTranslate } from '../../lib/i18n';
 
 // Single search result item component
 const SearchResultItem = ( {
@@ -21,6 +22,7 @@ const SearchResultItem = ( {
 	setActiveTabs,
 } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const userInterface = useSelector( ( state ) => state.userInterface );
 	const textToCopy = useRef( null );
 	const collapsibleRef = useRef( null );
@@ -39,19 +41,32 @@ const SearchResultItem = ( {
 		word,
 	} ) => {
 		return (
-			'word: ' +
+			t( 'word' ) +
+			': ' +
 			word +
-			'\nstrongs number: ' +
+			'\n' +
+			t( 'strongs number' ) +
+			': ' +
 			lemma +
-			'\nmorphology: ' +
+			'\n' +
+			t( 'morphology' ) +
+			': ' +
 			morph +
-			'\nversion: ' +
+			'\n' +
+			t( 'version' ) +
+			': ' +
 			version +
-			'\nclusivity: ' +
+			'\n' +
+			t( 'clusivity' ) +
+			': ' +
 			clusivity +
-			'\nrange: ' +
+			'\n' +
+			t( 'range' ) +
+			': ' +
 			range +
-			'\nstrict: ' +
+			'\n' +
+			t( 'strict' ) +
+			': ' +
 			strict
 		);
 	};

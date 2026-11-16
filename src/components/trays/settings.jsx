@@ -5,10 +5,12 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 // Internal
 import { settingsChange } from '../../actions';
 import VersionSelect from '../version-select';
+import { useTranslate } from '../../lib/i18n';
 import styles from './styles.module.scss';
 
 const SettingsTray = () => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const {
 		fontFamily,
 		fontSize,
@@ -62,14 +64,14 @@ const SettingsTray = () => {
 					<form>
 						<ul>
 							<li className={ styles.settingsLi }>
-								<label>Fonts:</label>
+								<label>{ t( 'Fonts:' ) }</label>
 								<select
 									value={ fontFamily }
 									name="fontFamily"
 									onChange={ changeSetting }
 								>
 									<option value='-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen-Sans", "Ubuntu", "Cantarell", "Helvetica Neue", Arial, Helvetica, sans-serif !important;'>
-										System
+										{ t( 'System' ) }
 									</option>
 									<option value="'Bookman Old Style' !important">
 										Bookman
@@ -92,7 +94,7 @@ const SettingsTray = () => {
 								</select>
 							</li>
 							<li className={ styles.settingsLi }>
-								<label>Font size:</label>
+								<label>{ t( 'Font size:' ) }</label>
 								<select
 									value={ fontSize }
 									name="fontSize"
@@ -114,7 +116,7 @@ const SettingsTray = () => {
 								</select>
 							</li>
 							<li className={ styles.settingsLi }>
-								<label>Highlight words with:</label>
+								<label>{ t( 'Highlight words with:' ) }</label>
 								<select
 									value={ highlightWordsWith }
 									id="highlightWordsWith"
@@ -122,13 +124,13 @@ const SettingsTray = () => {
 									onChange={ changeSetting }
 								>
 									<option value="same">
-										Same Strongs num
+										{ t( 'Same Strongs num' ) }
 									</option>
-									<option value="family">Same family</option>
+									<option value="family">{ t( 'Same family' ) }</option>
 								</select>
 							</li>
 							<li className={ styles.settingsLi }>
-								<label>Target column:</label>
+								<label>{ t( 'Target column:' ) }</label>
 								<select
 									value={ targetColumn }
 									id="targetColumn"
@@ -158,7 +160,7 @@ const SettingsTray = () => {
 										checked={ expandedSearchResults }
 										onChange={ changeCheckboxSetting }
 									/>{ ' ' }
-									Show expanded search results
+									{ t( 'Show expanded search results' ) }
 								</label>
 							</li>
 							<li className={ styles.settingsLi }>
@@ -169,7 +171,7 @@ const SettingsTray = () => {
 										checked={ darkMode }
 										onChange={ changeCheckboxSetting }
 									/>{ ' ' }
-									Dark Mode
+									{ t( 'Dark Mode' ) }
 								</label>
 							</li>
 							<li className={ styles.settingsLi }>
@@ -180,7 +182,7 @@ const SettingsTray = () => {
 										checked={ compareMode }
 										onChange={ changeCheckboxSetting }
 									/>{ ' ' }
-									Compare Mode
+									{ t( 'Compare Mode' ) }
 								</label>
 							</li>
 							<li className={ styles.settingsLi }>
@@ -191,12 +193,13 @@ const SettingsTray = () => {
 										checked={ highlightSearchResults }
 										onChange={ changeCheckboxSetting }
 									/>{ ' ' }
-									Highlight all words in a verse when hovering
-									the search results
+									{ t(
+										'Highlight all words in a verse when hovering the search results'
+									) }
 								</label>
 							</li>
 							<li className={ styles.settingsLi }>
-								<label>Interface language:</label>
+								<label>{ t( 'Interface language:' ) }</label>
 								<VersionSelect
 									value={ interfaceLanguage }
 									name="interfaceLanguage"
@@ -207,7 +210,7 @@ const SettingsTray = () => {
 					</form>
 					<p>
 						<a href="#" onClick={ clear }>
-							Clear settings and start over
+							{ t( 'Clear settings and start over' ) }
 						</a>
 					</p>
 				</div>

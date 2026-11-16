@@ -14,9 +14,11 @@ import {
 	toggleVersion,
 	settingsChange,
 } from '../../actions';
+import { useTranslate } from '../../lib/i18n';
 
 const Versions = ( { initialView = false } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const [ searchQuery, setSearchQuery ] = useState( '' );
 	const [ collapsedLanguages, setCollapsedLanguages ] = useState( {} );
 	const defaultLanguagesCollapsed = ! initialView;
@@ -133,7 +135,7 @@ const Versions = ( { initialView = false } ) => {
 								);
 							} }
 						>
-							All
+							{ t( 'All' ) }
 						</button>
 						&nbsp;
 						<button
@@ -142,7 +144,7 @@ const Versions = ( { initialView = false } ) => {
 								clearAllVersions();
 							} }
 						>
-							Clear
+							{ t( 'Clear' ) }
 						</button>
 						&nbsp;
 						<button
@@ -153,15 +155,15 @@ const Versions = ( { initialView = false } ) => {
 								)
 							}
 						>
-							Done
+							{ t( 'Done' ) }
 						</button>
 					</div>
 				) }
 				<div className={ styles.searchContainer }>
-					<legend>Select version or search</legend>
+					<legend>{ t( 'Select version or search' ) }</legend>
 					<input
 						type="text"
-						placeholder="Search versions..."
+						placeholder={ t( 'Search versions...' ) }
 						value={ searchQuery }
 						onChange={ ( e ) => setSearchQuery( e.target.value ) }
 						className={ styles.searchInput }
@@ -181,7 +183,7 @@ const Versions = ( { initialView = false } ) => {
 								}
 							} }
 						>
-							Clear all
+							{ t( 'Clear all' ) }
 						</a>
 					) }
 				</div>

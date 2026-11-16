@@ -15,6 +15,7 @@ import {
 import ExpandedSearchResults from '../expanded-search-results';
 import InlineResultsToggle from '../inline-results-toggle';
 import { getReferenceStringByGroup, getCountedResults } from './utils';
+import { useTranslate } from '../../lib/i18n';
 
 const SortGroupResults = ( {
 	type = null,
@@ -30,6 +31,7 @@ const SortGroupResults = ( {
 	precomputedResults = null,
 } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const [ group, setGroup ] = useState( initialGroup );
 	const [ sort, setSort ] = useState( initialSort );
 
@@ -152,33 +154,33 @@ const SortGroupResults = ( {
 
 	const groupSelector = (
 		<div>
-			<label>Group by</label>
+			<label>{ t( 'Group by' ) }</label>
 			<select
 				className={ styles.select }
 				value={ group }
 				onChange={ ( event ) => setGroup( event.target.value ) }
 			>
-				<option value="book">book</option>
-				<option value="chapter">chapter</option>
-				<option value="verse">verse</option>
-				{ supportsWord && <option value="word">word</option> }
-				{ supportsWord && <option value="morph">morph</option> }
-				{ supportsStrongs && <option value="strongs">strongs</option> }
+				<option value="book">{ t( 'book' ) }</option>
+				<option value="chapter">{ t( 'chapter' ) }</option>
+				<option value="verse">{ t( 'verse' ) }</option>
+				{ supportsWord && <option value="word">{ t( 'word' ) }</option> }
+				{ supportsWord && <option value="morph">{ t( 'morph' ) }</option> }
+				{ supportsStrongs && <option value="strongs">{ t( 'strongs' ) }</option> }
 			</select>
 		</div>
 	);
 
 	const sortSelector = (
 		<div>
-			<label>Sort by</label>
+			<label>{ t( 'Sort by' ) }</label>
 			<select
 				className={ styles.select }
 				value={ sort }
 				onChange={ ( event ) => setSort( event.target.value ) }
 			>
-				<option value="reference">Reference</option>
-				<option value="desc">Descending ↓</option>
-				<option value="asc">Ascending ↑</option>
+				<option value="reference">{ t( 'Reference' ) }</option>
+				<option value="desc">{ t( 'Descending' ) } ↓</option>
+				<option value="asc">{ t( 'Ascending' ) } ↑</option>
 			</select>
 		</div>
 	);
@@ -281,11 +283,10 @@ const SortGroupResults = ( {
 					selectedResultsGrouped[ result ]
 				);
 
-				const title =
-					selectedResultsGrouped[ result ].length +
-					' of type / ' +
-					countedResults[ referenceString ] +
-					'  total';
+				const title = t( '{count} of type / {total} total', {
+					count: selectedResultsGrouped[ result ].length,
+					total: countedResults[ referenceString ],
+				} );
 				return (
 					<div
 						key={ index }

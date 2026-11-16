@@ -12,6 +12,7 @@ import SortForm from '../sort-form';
 import bible from '../../data/bible.js';
 import { selectWord } from '../../actions';
 import { getReferenceFromSearchResult } from '../../lib/reference';
+import { useTranslate } from '../../lib/i18n';
 
 const groupResultsByStrongs = ( results ) => {
 	const grouped = {};
@@ -35,6 +36,7 @@ const groupResultsByStrongs = ( results ) => {
 
 const SearchBlock = ( props ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const interfaceLanguage = useSelector(
 		( state ) => state.settings.interfaceLanguage
 	);
@@ -67,13 +69,13 @@ const SearchBlock = ( props ) => {
 	);
 
 	if ( ! results ) {
-		return <div className={ styles.noResults }>Loading…</div>;
+		return <div className={ styles.noResults }>{ t( 'Loading…' ) }</div>;
 	}
 
 	if ( results.length === 0 || typeof results === 'string' ) {
 		return (
 			<div className={ visible ? styles.noResults : styles.hidden }>
-				No results.
+				{ t( 'No results.' ) }
 			</div>
 		);
 	}
@@ -203,7 +205,7 @@ const SearchBlock = ( props ) => {
 
 	// Build filter options
 	const filterOptions = [
-		{ value: 'all', label: 'All books' },
+		{ value: 'all', label: t( 'All books' ) },
 		...[ ...new Set( resultsBooks ) ].map( ( book ) => ( {
 			value: book,
 			label: book,
@@ -211,14 +213,17 @@ const SearchBlock = ( props ) => {
 	];
 
 	const sortOptions = [
-		{ value: 'reference', label: 'Reference' },
-		{ value: 'strongs', label: 'Strongs' },
+		{ value: 'reference', label: t( 'Reference' ) },
+		{ value: 'strongs', label: t( 'Strongs' ) },
 	];
 
 	return (
 		<div dir={ bible.isRtlVersion( interfaceLanguage ) ? 'rtl' : 'ltr' }>
 			<InlineResultsToggle />
-			Found { results.length } results in { props.data.version }{ ' ' }
+			{ t( 'Found {count} results in {version}', {
+				count: results.length,
+				version: props.data.version,
+			} ) }{ ' ' }
 			{ strongsNumbers.length > 0 && (
 				<SortForm
 					sortBy={ sortBy }

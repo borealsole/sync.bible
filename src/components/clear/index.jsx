@@ -5,9 +5,11 @@ import PropTypes from 'prop-types';
 // Internal
 import { removeTypeFromList } from '../../actions';
 import DeleteForever from '../svg/delete-forever';
+import { useTranslate } from '../../lib/i18n';
 
 const Clear = ( { className, selectedTrayId } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const list = useSelector( ( state ) => state.list );
 
 	// Check if this tray type supports clearing
@@ -30,7 +32,7 @@ const Clear = ( { className, selectedTrayId } ) => {
 	};
 
 	return (
-		<button onClick={ clearTray } title="Clear" className={ className }>
+		<button onClick={ clearTray } title={ t( 'Clear' ) } className={ className }>
 			<DeleteForever />
 		</button>
 	);

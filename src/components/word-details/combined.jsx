@@ -10,9 +10,11 @@ import JoinFull from '../svg/join-full';
 import SortGroupResults from '../sort-group-results';
 import { getCombinedResults } from '../../lib/reference';
 import { useScrollIntoView } from '../../hooks/use-scroll-into-view';
+import { useTranslate } from '../../lib/i18n';
 
 const CombinedResults = ( { type } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
 	const [ open, setOpen ] = useState( false );
 	const collapsibleRef = useRef( null );
 	const words = useSelector( ( state ) => {
@@ -57,7 +59,7 @@ const CombinedResults = ( { type } ) => {
 			className="collapse"
 			header={
 				<div>
-					Combined{ ' ' }
+					{ t( 'Combined' ) }{ ' ' }
 					<a
 						onClick={ ( event ) => {
 							event.stopPropagation();

@@ -7,8 +7,10 @@ import styles from './styles.module.scss';
 import CombinedResults from './combined';
 import SharedWords from '../shared-words';
 import WordBlock from './word-block';
+import { useTranslate } from '../../lib/i18n';
 
 const WordDetails = () => {
+	const t = useTranslate();
 	const list = useSelector( ( state ) => state.list );
 	const userInterface = useSelector( ( state ) => state.userInterface );
 	const words = list.filter( ( { listType } ) => listType === 'word' );
@@ -38,7 +40,7 @@ const WordDetails = () => {
 		</div>
 	) : (
 		<div className={ styles.wordBlockHelp }>
-			Select a word to show more details about it here.
+			{ t( 'Select a word to show more details about it here.' ) }
 		</div>
 	);
 };

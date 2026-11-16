@@ -8,9 +8,14 @@ import bible from '../../data/bible';
 import styles from './styles.module.scss';
 import { fetchDataAsync, setReferenceInfo } from '../../actions';
 import { getBooks, getCompareChapters } from '../../lib/select-helpers';
+import { useTranslate } from '../../lib/i18n';
 
 const Connections = ( { close } ) => {
 	const dispatch = useDispatch();
+	const t = useTranslate();
+	const interfaceLanguage = useSelector(
+		( state ) => state.settings.interfaceLanguage
+	);
 	//dispatch( fetchData( 'original' ) );
 	dispatch( fetchDataAsync( 'strongsObjectWithFamilies' ) );
 	dispatch( fetchDataAsync( 'comparisonData' ) );
@@ -126,13 +131,20 @@ const Connections = ( { close } ) => {
 					<span
 						key={ key }
 						title={
-							'Uniqueness ' +
+							t( 'Uniqueness' ) +
+							' ' +
 							hue.toFixed( 2 ) +
-							'\r\nDensity ' +
+							'\r\n' +
+							t( 'Density' ) +
+							' ' +
 							saturation.toFixed( 2 ) +
-							'\r\nSignificance ' +
+							'\r\n' +
+							t( 'Significance' ) +
+							' ' +
 							lightness.toFixed( 2 ) +
-							'\r\nCombined ' +
+							'\r\n' +
+							t( 'Combined' ) +
+							' ' +
 							( hue * saturation * lightness ).toFixed( 2 )
 						}
 						style={ {
@@ -199,26 +211,26 @@ const Connections = ( { close } ) => {
 			<div className={ styles.content }>
 				<div className={ styles.controls }>
 					<div>
-						<label htmlFor="sort">Chapter to compare</label>
+						<label htmlFor="sort">{ t( 'Chapter to compare' ) }</label>
 						<div className={ styles.reference }>
 							<select
 								name="compareWithBook"
 								onChange={ compareBookChange }
 								value={ reference ? reference.book : '' }
 							>
-								{ getBooks() }
+								{ getBooks( interfaceLanguage, t ) }
 							</select>
 							<select
 								name="compareWithChapter"
 								onChange={ compareChapterChange }
 								value={ reference ? reference.chapter : '' }
 							>
-								{ getCompareChapters( reference ) }
+								{ getCompareChapters( reference, t ) }
 							</select>
 						</div>
 					</div>
 					<div>
-						<label htmlFor="sort">Sort by</label>
+						<label htmlFor="sort">{ t( 'Sort by' ) }</label>
 						<br />
 						<select
 							name="sort"
@@ -227,24 +239,24 @@ const Connections = ( { close } ) => {
 								setSort( event.target.value )
 							}
 						>
-							<option value="bookorder">Book order</option>
-							<option value="hue">Uniquenesss</option>
-							<option value="saturation">Density</option>
-							<option value="lightness">Significance</option>
-							<option value="combined">Combined</option>
+							<option value="bookorder">{ t( 'Book order' ) }</option>
+							<option value="hue">{ t( 'Uniqueness' ) }</option>
+							<option value="saturation">{ t( 'Density' ) }</option>
+							<option value="lightness">{ t( 'Significance' ) }</option>
+							<option value="combined">{ t( 'Combined' ) }</option>
 						</select>
 					</div>
 					<div>
 						<label onClick={ () => close() }>X</label>
 						<br />
 						<button onClick={ () => setShowMore( ! showMore ) }>
-							How it works
+							{ t( 'How it works' ) }
 						</button>
 					</div>
 				</div>
 				<div className={ styles.adjustments }>
 					<div>
-						<label htmlFor="hueFactor">Uniqueness</label>
+						<label htmlFor="hueFactor">{ t( 'Uniqueness' ) }</label>
 						<br />
 						<input
 							type="range"
@@ -257,7 +269,7 @@ const Connections = ( { close } ) => {
 						/>
 					</div>
 					<div>
-						<label htmlFor="saturationFactor">Density</label>
+						<label htmlFor="saturationFactor">{ t( 'Density' ) }</label>
 						<br />
 						<input
 							type="range"
@@ -270,7 +282,9 @@ const Connections = ( { close } ) => {
 						/>
 					</div>
 					<div>
-						<label htmlFor="lightnessFactor">Significance</label>
+						<label htmlFor="lightnessFactor">
+							{ t( 'Significance' ) }
+						</label>
 						<br />
 						<input
 							type="range"
@@ -287,75 +301,51 @@ const Connections = ( { close } ) => {
 					<div>
 						<div>
 							<h2>
-								Find connections between chapters of the bible
+								{ t(
+									'Find connections between chapters of the bible'
+								) }
 							</h2>
 							<p>
-								This compares a chapter of the bible with all
-								the other chapters, to find the chapters with
-								most connections.{ ' ' }
+								{ t(
+									'This compares a chapter of the bible with all the other chapters, to find the chapters with most connections.'
+								) }{ ' ' }
 								<a onClick={ () => setShowMore( ! showMore ) }>
-									How it works.
+									{ t( 'How it works.' ) }
 								</a>
 							</p>
 							<p>
-								Connections are made using Strong&apos;s
-								numbers, and include all numbers, even those
-								that are very common. There are three ways to
-								meaure the importance of connections:
+								{ t(
+									"Connections are made using Strong's numbers, and include all numbers, even those that are very common. There are three ways to measure the importance of connections:"
+								) }
 							</p>
 							<ol>
 								<li>
-									<strong>Uniqueness</strong>
+									<strong>{ t( 'Uniqueness' ) }</strong>
 									<br />
-									This is a measure of how common or rare the
-									connected words are. It is represented by
-									the visual color spectrum (hue). Red
-									represents very common words, yellow and
-									green are less common, purple and pink are
-									rare words. The uniqueness of a word is
-									calculated by dividing the number of uses of
-									the Strong&apos;s number in the whole bible
-									by 50986, since this is how many times the
-									most common word is used. This value is
-									calculated for every connection between the
-									two passages, added together, and then
-									divided by the total number of connections.
+									{ t(
+										"This is a measure of how common or rare the connected words are. It is represented by the visual color spectrum (hue). Red represents very common words, yellow and green are less common, purple and pink are rare words. The uniqueness of a word is calculated by dividing the number of uses of the Strong's number in the whole bible by 50986, since this is how many times the most common word is used. This value is calculated for every connection between the two passages, added together, and then divided by the total number of connections."
+									) }
 								</li>
 								<li>
-									<strong>Density</strong>
+									<strong>{ t( 'Density' ) }</strong>
 									<br />
-									This is a meause of how many times each
-									connection occours. It is represented by the
-									saturation levels of the colors - the more
-									saturated a color is, the more dense the
-									connections are. It is calculated by
-									multiplying the number of uses of each
-									connected Strong&apos;s number in both
-									passages and then dividing by the average
-									number of words in both passages.
+									{ t(
+										"This is a measure of how many times each connection occurs. It is represented by the saturation levels of the colors - the more saturated a color is, the more dense the connections are. It is calculated by multiplying the number of uses of each connected Strong's number in both passages and then dividing by the average number of words in both passages."
+									) }
 								</li>
 								<li>
-									<strong>Significance</strong>
+									<strong>{ t( 'Significance' ) }</strong>
 									<br />
-									This is a measure of the percentage of the
-									chapters which are connected. It is
-									represented by the lightness of the color -
-									the lighter the color the greater a
-									percentage of the two passages are the same.
-									When comparing a chapter with itself this
-									should always be 100%, i.e white. It is
-									calculated by dividing the number of
-									connections between the two passages by the
-									number of unique Strong&apos;s numbers in
-									the shorter passage.
+									{ t(
+										"This is a measure of the percentage of the chapters which are connected. It is represented by the lightness of the color - the lighter the color the greater a percentage of the two passages are the same. When comparing a chapter with itself this should always be 100%, i.e white. It is calculated by dividing the number of connections between the two passages by the number of unique Strong's numbers in the shorter passage."
+									) }
 								</li>
 							</ol>
-							<h2>Adjustments</h2>
+							<h2>{ t( 'Adjustments' ) }</h2>
 							<p>
-								The colors are adjusted to make the differences
-								between them easier to see in the average case,
-								but in some cases you might want to change these
-								settings to make it clearer.
+								{ t(
+									'The colors are adjusted to make the differences between them easier to see in the average case, but in some cases you might want to change these settings to make it clearer.'
+								) }
 							</p>
 						</div>
 					</div>

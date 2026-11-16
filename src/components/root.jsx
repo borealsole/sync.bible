@@ -16,9 +16,16 @@ import { rootClasses } from './utils';
 import { selectAllSettings, selectReferenceData } from '../selectors';
 import { getReferenceFromHash } from '../lib/reference';
 import bible from '../data/bible';
+import { useLocale } from '../lib/i18n';
 
 export default function Root() {
 	const dispatch = useDispatch();
+	const locale = useLocale();
+
+	// Keep the document language in step with the interface language.
+	useEffect( () => {
+		document.documentElement.lang = locale;
+	}, [ locale ] );
 	const hasInitialized = useRef( false );
 
 	// On initial mount, process URL to set reference and interface language
