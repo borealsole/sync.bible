@@ -146,7 +146,7 @@ const WordBlockDetails = ( {
 			{ value: 'all', label: t( 'All books' ) },
 			...booksInResults.map( ( book ) => ( {
 				value: book,
-				label: bible.getTranslatedBookName( book, version ),
+				label: bible.getTranslatedBookName( book, interfaceLanguage ),
 			} ) ),
 		];
 

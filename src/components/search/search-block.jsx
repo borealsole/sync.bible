@@ -208,7 +208,7 @@ const SearchBlock = ( props ) => {
 		{ value: 'all', label: t( 'All books' ) },
 		...[ ...new Set( resultsBooks ) ].map( ( book ) => ( {
 			value: book,
-			label: book,
+			label: bible.getTranslatedBookName( book, interfaceLanguage ),
 		} ) ),
 	];
 

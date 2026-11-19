@@ -6241,6 +6241,11 @@ bible.Data.bookNamesByLanguage = {
 		'启 示 录',
 	],
 };
+// Keep the lists defined above, so the fallbacks below can't replace them.
+const definedBookNamesByLanguage = { ...bible.Data.bookNamesByLanguage };
+// The luo list has 73 entries that don't line up with the 66 books.
+delete definedBookNamesByLanguage.luo;
+
 bible.Data.bookNamesByLanguage.he = bible.Data.bookNamesByLanguage.hbo;
 bible.Data.bookNamesByLanguage.azb = bible.Data.bookNamesByLanguage.az;
 
@@ -7575,6 +7580,9 @@ bible.Data.bookNamesByLanguage.sby = bible.Data.bookNamesByLanguage.en;
 bible.Data.bookNamesByLanguage.sna = bible.Data.bookNamesByLanguage.en;
 bible.Data.bookNamesByLanguage.dov = bible.Data.bookNamesByLanguage.en;
 bible.Data.bookNamesByLanguage.nde = bible.Data.bookNamesByLanguage.en;
+
+// Restore the defined lists that a fallback above replaced with English.
+Object.assign( bible.Data.bookNamesByLanguage, definedBookNamesByLanguage );
 
 bible.Data.rtlLanguages = [
 	'he',

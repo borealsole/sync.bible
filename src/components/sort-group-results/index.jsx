@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 
 // Internal
 import { goToReferenceAction } from '../../actions';
+import bible from '../../data/bible.js';
 import styles from './styles.module.scss';
 import {
 	getReferenceFromSearchResult,
@@ -189,6 +190,11 @@ const SortGroupResults = ( {
 		return null;
 	}
 
+	const getBookName = ( book ) =>
+		( interfaceLanguage &&
+			bible.getTranslatedBookName( book, interfaceLanguage ) ) ||
+		book;
+
 	const getLabel = ( result ) => {
 		if ( group === 'morph' ) {
 			return result.word && result.word[ 2 ];
@@ -207,17 +213,23 @@ const SortGroupResults = ( {
 		}
 		if ( group === 'book' ) {
 			if ( Array.isArray( result ) ) {
-				return result[ 0 ];
+				return getBookName( result[ 0 ] );
 			}
 		}
 		if ( group === 'chapter' ) {
 			if ( Array.isArray( result ) ) {
-				return result[ 0 ] + ' ' + result[ 1 ];
+				return getBookName( result[ 0 ] ) + ' ' + result[ 1 ];
 			}
 		}
 		if ( group === 'verse' ) {
 			if ( Array.isArray( result ) ) {
-				return result[ 0 ] + ' ' + result[ 1 ] + ':' + result[ 2 ];
+				return (
+					getBookName( result[ 0 ] ) +
+					' ' +
+					result[ 1 ] +
+					':' +
+					result[ 2 ]
+				);
 			}
 		}
 
